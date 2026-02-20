@@ -17,6 +17,8 @@ public class SplashX_PlayerMovement : MonoBehaviour
     [Header("Controls")]
     public KeyCode jumpKey = KeyCode.J;
     public KeyCode dashKey = KeyCode.K;
+    public KeyCode downKey = KeyCode.S;
+    public KeyCode attackKey = KeyCode.Y;
 
     [Header("Ground Check")]
     public Transform groundCheck;
@@ -24,39 +26,63 @@ public class SplashX_PlayerMovement : MonoBehaviour
     public LayerMask groundLayer;
     private bool isGrounded;
 
+    [Header("Combat Settings")]
+    public Transform attackPoint;
+    public float attackRange = 0.5f;
+    public LayerMask enemyLayers;
+    public int attackDamage = 20;
+    public float attackRate = 2f;
+    private float nextAttackTime = 0f;
+
     private Rigidbody2D rb;
+    private Collider2D playerCollider;
     private float moveInput;
     private bool facingRight = true;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        playerCollider = GetComponent<Collider2D>();
     }
 
     void Update()
     {
         if (isDashing) return;
 
-        // 1. รับค่าการเดิน
         moveInput = Input.GetAxisRaw("Horizontal");
 
-        // 2. เช็คพื้น
         if (groundCheck != null)
         {
             isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
         }
 
-        // 3. กระโดด (Jump)
-        if (Input.GetKeyDown(jumpKey) && isGrounded)
+        // 1. ระบบกระโดด และ ลงจากแพลตฟอร์ม
+        if (Input.GetKeyDown(jumpKey))
         {
-            // แก้ velocity -> linearVelocity
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+            if (Input.GetKey(downKey))
+            {
+                DropFromPlatform();
+            }
+            else if (isGrounded)
+            {
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+            }
         }
 
-        // 4. แดช (Dash)
+        // 2. ระบบแดช
         if (Input.GetKeyDown(dashKey) && canDash)
         {
             StartCoroutine(Dash());
+        }
+
+        // 3. ระบบโจมตี
+        if (Time.time >= nextAttackTime)
+        {
+            if (Input.GetKeyDown(attackKey))
+            {
+                Attack();
+                nextAttackTime = Time.time + 1f / attackRate;
+            }
         }
 
         Flip();
@@ -65,11 +91,31 @@ public class SplashX_PlayerMovement : MonoBehaviour
     void FixedUpdate()
     {
         if (isDashing) return;
-
-        // แก้ velocity -> linearVelocity
         rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
     }
 
+    // --- ฟังก์ชันโจมตี ---
+    void Attack()
+    {
+        Debug.Log("สวิงกีตาร์แล้ว!"); // ดูว่าข้อความนี้ขึ้นไหมเวลากด Y
+
+        if (attackPoint == null) return;
+
+        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
+
+        Debug.Log("เจอศัตรูในวงกลมจำนวน: " + hitEnemies.Length + " ตัว"); // เช็คว่าวงกลมจับใครได้บ้าง
+
+        foreach (Collider2D enemy in hitEnemies)
+        {
+            SplashX_Enemy enemyScript = enemy.GetComponent<SplashX_Enemy>();
+            if (enemyScript != null)
+            {
+                enemyScript.TakeDamage(attackDamage);
+            }
+        }
+    }
+
+    // --- หันหน้าตัวละคร ---
     private void Flip()
     {
         if (moveInput > 0 && !facingRight)
@@ -84,6 +130,32 @@ public class SplashX_PlayerMovement : MonoBehaviour
         }
     }
 
+    // --- ฟังก์ชันลงจากแพลตฟอร์ม ---
+    private void DropFromPlatform()
+    {
+        if (groundCheck == null) return;
+
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(groundCheck.position, groundCheckRadius, groundLayer);
+
+        foreach (Collider2D col in colliders)
+        {
+            if (col.GetComponent<PlatformEffector2D>() != null)
+            {
+                StartCoroutine(DisableCollisionTemporary(col));
+                break;
+            }
+        }
+    }
+
+    // --- Coroutine สำหรับปิดการชนตอนลงจากแพลตฟอร์มชั่วคราว ---
+    private IEnumerator DisableCollisionTemporary(Collider2D platformCollider)
+    {
+        Physics2D.IgnoreCollision(playerCollider, platformCollider, true);
+        yield return new WaitForSeconds(0.5f);
+        Physics2D.IgnoreCollision(playerCollider, platformCollider, false);
+    }
+
+    // --- Coroutine สำหรับพุ่ง (Dash) ---
     private IEnumerator Dash()
     {
         canDash = false;
@@ -92,25 +164,31 @@ public class SplashX_PlayerMovement : MonoBehaviour
         float originalGravity = rb.gravityScale;
         rb.gravityScale = 0f;
 
-        // แก้ velocity -> linearVelocity
         rb.linearVelocity = new Vector2((facingRight ? 1 : -1) * dashSpeed, 0f);
 
         yield return new WaitForSeconds(dashDuration);
 
         rb.gravityScale = originalGravity;
-        rb.linearVelocity = Vector2.zero; // หยุดตัวละครหลัง Dash เสร็จนิดนึง
+        rb.linearVelocity = Vector2.zero;
         isDashing = false;
 
         yield return new WaitForSeconds(dashCooldown);
         canDash = true;
     }
 
+    // --- วาดเส้นช่วยเล็งในหน้า Scene ---
     private void OnDrawGizmos()
     {
         if (groundCheck != null)
         {
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
+        }
+
+        if (attackPoint != null)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(attackPoint.position, attackRange);
         }
     }
 }
