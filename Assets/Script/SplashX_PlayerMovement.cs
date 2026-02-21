@@ -97,13 +97,13 @@ public class SplashX_PlayerMovement : MonoBehaviour
     // --- ฟังก์ชันโจมตี ---
     void Attack()
     {
-        Debug.Log("สวิงกีตาร์แล้ว!"); // ดูว่าข้อความนี้ขึ้นไหมเวลากด Y
+        Debug.Log("สวิงกีตาร์แล้ว!");
 
         if (attackPoint == null) return;
 
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
 
-        Debug.Log("เจอศัตรูในวงกลมจำนวน: " + hitEnemies.Length + " ตัว"); // เช็คว่าวงกลมจับใครได้บ้าง
+        Debug.Log("เจอศัตรูในวงกลมจำนวน: " + hitEnemies.Length + " ตัว");
 
         foreach (Collider2D enemy in hitEnemies)
         {
