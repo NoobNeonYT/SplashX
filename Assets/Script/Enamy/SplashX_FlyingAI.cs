@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class SplashX_FlyingAI : MonoBehaviour
 {
-    // Attributes ต้องอยู่ในปีกกาของ Class และอยู่เหนือตัวแปรเท่านั้น
     [Header("Target Settings")]
     public Transform player;
     public float followRange = 10f;
