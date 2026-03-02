@@ -111,6 +111,7 @@ public class SplashX_PlayerMovement : MonoBehaviour
             if (enemyScript != null)
             {
                 enemyScript.TakeDamage(attackDamage);
+                Debug.Log("โจมตีศัตรู: " + enemy.name + " ได้รับความเสียหาย: " + attackDamage);
             }
         }
     }
