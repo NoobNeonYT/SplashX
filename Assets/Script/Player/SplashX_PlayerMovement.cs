@@ -11,6 +11,7 @@ public class SplashX_PlayerMovement : MonoBehaviour
     public float dashSpeed = 20f;
     public float dashDuration = 0.2f;
     public float dashCooldown = 1f;
+    public float dashStaminaCost = 20f; // เพิ่มค่าใช้จ่าย Stamina ในการแดชแต่ละครั้ง
     private bool isDashing;
     private bool canDash = true;
 
@@ -36,6 +37,7 @@ public class SplashX_PlayerMovement : MonoBehaviour
 
     private Rigidbody2D rb;
     private Collider2D playerCollider;
+    private SplashX_PlayerStats playerStats; // เชื่อมกับระบบเลือดและ Stamina
     private float moveInput;
     private bool facingRight = true;
 
@@ -43,6 +45,7 @@ public class SplashX_PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         playerCollider = GetComponent<Collider2D>();
+        playerStats = GetComponent<SplashX_PlayerStats>(); // ดึงสคริปต์ Stats อัตโนมัติ
     }
 
     void Update()
@@ -69,10 +72,26 @@ public class SplashX_PlayerMovement : MonoBehaviour
             }
         }
 
-        // 2. ระบบแดช
+        // 2. ระบบแดช (เพิ่มเงื่อนไข Stamina)
         if (Input.GetKeyDown(dashKey) && canDash)
         {
-            StartCoroutine(Dash());
+            // ถ้ามีสคริปต์ Stats แปะอยู่ ให้เช็ค Stamina ก่อน
+            if (playerStats != null)
+            {
+                if (playerStats.UseStamina(dashStaminaCost))
+                {
+                    StartCoroutine(Dash());
+                }
+                else
+                {
+                    Debug.Log("แดชไม่ได้! Stamina ไม่พอ");
+                }
+            }
+            else
+            {
+                // ถ้าลืมแปะสคริปต์ Stats ก็ยังให้แดชได้ปกติ (กันเกมพังตอนเทส)
+                StartCoroutine(Dash());
+            }
         }
 
         // 3. ระบบโจมตี
