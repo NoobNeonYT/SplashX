@@ -24,7 +24,8 @@ public class SplashX_PlayerMovement : MonoBehaviour
     [Header("Ground Check")]
     public Transform groundCheck;
     public float groundCheckRadius = 0.2f;
-    public LayerMask groundLayer;
+    // เปลี่ยนชื่อให้ชัดเจน ว่าเช็คได้ทั้ง Ground และ Platform
+    public LayerMask groundAndPlatformLayer;
     private bool isGrounded;
 
     [Header("Combat Settings")]
@@ -56,7 +57,8 @@ public class SplashX_PlayerMovement : MonoBehaviour
 
         if (groundCheck != null)
         {
-            isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+            // ใช้ groundAndPlatformLayer ในการเช็คพื้น
+            isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundAndPlatformLayer);
         }
 
         // 1. ระบบกระโดด และ ลงจากแพลตฟอร์ม
@@ -75,7 +77,6 @@ public class SplashX_PlayerMovement : MonoBehaviour
         // 2. ระบบแดช (เพิ่มเงื่อนไข Stamina)
         if (Input.GetKeyDown(dashKey) && canDash)
         {
-            // ถ้ามีสคริปต์ Stats แปะอยู่ ให้เช็ค Stamina ก่อน
             if (playerStats != null)
             {
                 if (playerStats.UseStamina(dashStaminaCost))
@@ -89,7 +90,6 @@ public class SplashX_PlayerMovement : MonoBehaviour
             }
             else
             {
-                // ถ้าลืมแปะสคริปต์ Stats ก็ยังให้แดชได้ปกติ (กันเกมพังตอนเทส)
                 StartCoroutine(Dash());
             }
         }
@@ -155,14 +155,15 @@ public class SplashX_PlayerMovement : MonoBehaviour
     {
         if (groundCheck == null) return;
 
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(groundCheck.position, groundCheckRadius, groundLayer);
+        // ใช้ groundAndPlatformLayer เพื่อหาว่ายืนอยู่บนแพลตฟอร์มไหม
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(groundCheck.position, groundCheckRadius, groundAndPlatformLayer);
 
         foreach (Collider2D col in colliders)
         {
             if (col.GetComponent<PlatformEffector2D>() != null)
             {
                 StartCoroutine(DisableCollisionTemporary(col));
-                break;
+                break; // เลิกวนลูปทันทีที่เจอแพลตฟอร์ม
             }
         }
     }
