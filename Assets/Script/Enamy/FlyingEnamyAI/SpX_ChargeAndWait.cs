@@ -4,13 +4,12 @@ using System.Collections;
 public class SplashX_DemonEyeAI : MonoBehaviour
 {
     public enum EyeState { Hover, WindUp, Dash, Cooldown }
-    private bool facingRight = true;
     [Header("Current State")]
     public EyeState currentState = EyeState.Hover;
 
     [Header("Components")]
     public TrailRenderer trail;
-    public GameObject sparkEffectPrefab; // 💥 ลาก Prefab Sparks_VFX มาใส่ในช่องนี้ใน Inspector
+    public GameObject sparkEffectPrefab;
 
     [Header("Hover & Positioning")]
     public float hoverSpeed = 4f;
@@ -30,7 +29,7 @@ public class SplashX_DemonEyeAI : MonoBehaviour
     [Header("Obstacle Avoidance & Bounce")]
     public LayerMask obstacleLayer;
     public float avoidRange = 2f;
-    public float bodyRadius = 0.5f; // 🟢 ขนาดตัวของลูกตาสำหรับเช็คเด้งกำแพง
+    public float bodyRadius = 0.5f;
 
     private Rigidbody2D rb;
     private Transform player;
@@ -40,6 +39,9 @@ public class SplashX_DemonEyeAI : MonoBehaviour
     private Vector2 currentHoverOffset;
     private float hoverChangeTimer;
     private float attackTimer;
+
+    // ตัวแปรสำหรับเช็คการหันหน้า
+    private bool facingRight = true;
 
     void Start()
     {
@@ -64,14 +66,17 @@ public class SplashX_DemonEyeAI : MonoBehaviour
             case EyeState.WindUp:
                 break;
             case EyeState.Dash:
-                DashLogic(); // 🔥 เรียกใช้ระบบเช็คเด้งกำแพงตรงนี้
+                DashLogic();
                 break;
             case EyeState.Cooldown:
                 rb.linearVelocity = Vector2.Lerp(rb.linearVelocity, Vector2.zero, Time.deltaTime * 3f);
                 break;
         }
-        RotateTowardsVelocity();
+
+        // เรียกใช้ฟังก์ชันหันซ้ายขวา
+        FlipEye();
     }
+
     void HoverLogic()
     {
         float distToPlayer = Vector2.Distance(transform.position, player.position);
@@ -88,10 +93,18 @@ public class SplashX_DemonEyeAI : MonoBehaviour
         if (hoverChangeTimer <= 0) PickNewHoverPoint();
 
         Vector2 targetPos = (Vector2)player.position + currentHoverOffset;
-        Vector2 dirToTarget = (targetPos - (Vector2)transform.position).normalized;
+        float distToTarget = Vector2.Distance(transform.position, targetPos);
 
-        Vector2 safeDirection = FindClearPath(dirToTarget);
-        rb.linearVelocity = safeDirection * hoverSpeed;
+        if (distToTarget < 0.2f)
+        {
+            rb.linearVelocity = Vector2.Lerp(rb.linearVelocity, Vector2.zero, Time.deltaTime * 10f);
+        }
+        else
+        {
+            Vector2 dirToTarget = (targetPos - (Vector2)transform.position).normalized;
+            Vector2 safeDirection = FindClearPath(dirToTarget);
+            rb.linearVelocity = safeDirection * hoverSpeed;
+        }
 
         if (attackTimer <= 0)
         {
@@ -126,34 +139,24 @@ public class SplashX_DemonEyeAI : MonoBehaviour
         return -targetDir;
     }
 
-    // --- 🟢 ระบบเช็คเด้งกำแพง (Raycast Reflection) ---
     void DashLogic()
     {
-        // ยิงเรดาร์วงกลมไปข้างหน้าล่วงหน้า 1 เฟรม
         RaycastHit2D hit = Physics2D.CircleCast(transform.position, bodyRadius, dashDirection, (dashSpeed * Time.deltaTime) + 0.1f, obstacleLayer);
 
         if (hit.collider != null)
         {
-            // --- 🟢 ส่วนที่ 2: ยิงเอฟเฟกต์สะเก็ดไฟ ---
             if (sparkEffectPrefab != null)
             {
-                // หาพิกัดที่ชน และ ทิศทางตั้งฉากของกำแพง
                 Vector2 contactPoint = hit.point;
-                Vector2 wallNormal = hit.normal; // wallNormal คือทิศที่พุ่งออกจากกำแพง
+                Vector2 wallNormal = hit.normal;
 
-                // คำนวณองศาให้เอฟเฟกต์พุ่งสวนทางออกมาจากกำแพง
                 float angle = Mathf.Atan2(wallNormal.y, wallNormal.x) * Mathf.Rad2Deg;
                 Quaternion spawnRotation = Quaternion.Euler(0, 0, angle);
 
-                // สร้างเอฟเฟกต์ ณ จุดที่ชน พร้อมหมุนให้ถูกทิศ
                 Instantiate(sparkEffectPrefab, contactPoint, spawnRotation);
             }
-            // ----------------------------------------
 
-            // คำนวณมุมตกกระทบแล้วเด้งออก (Reflect)
             dashDirection = Vector2.Reflect(dashDirection, hit.normal);
-
-            // สั่งให้พุ่งไปในทิศทางใหม่ที่เพิ่งเด้งมา
             rb.linearVelocity = dashDirection * dashSpeed;
         }
     }
@@ -161,19 +164,16 @@ public class SplashX_DemonEyeAI : MonoBehaviour
     IEnumerator DashRoutine()
     {
         currentState = EyeState.WindUp;
-        rb.linearVelocity = Vector2.zero; // เบรกหยุดนิ่งเพื่อชาร์จ
+        rb.linearVelocity = Vector2.zero;
 
-        // รอเวลาชาร์จ (จังหวะนี้มันจะนิ่งๆ ให้ผู้เล่นเตรียมตัว)
         yield return new WaitForSeconds(windUpTime);
 
-        // 🔥 จุดเปลี่ยนความโหด: ล็อคเป้าหมาย ณ เสี้ยววินาทีสุดท้ายก่อนออกตัว!
         dashDirection = (player.position - transform.position).normalized;
 
         currentState = EyeState.Dash;
         hasDamagedThisDash = false;
         if (trail != null) trail.emitting = true;
 
-        // สับสปีดพุ่งใส่ตำแหน่งที่ล็อคไว้
         rb.linearVelocity = dashDirection * dashSpeed;
         yield return new WaitForSeconds(dashDuration);
 
@@ -211,17 +211,23 @@ public class SplashX_DemonEyeAI : MonoBehaviour
             Gizmos.DrawWireCube(center, size);
         }
     }
-    // --- ระบบหมุนหัวสว่านชี้ตามทิศทางความเร็ว ---
-    void RotateTowardsVelocity()
-    {
-        // เช็คว่ามีความเร็วอยู่ไหม (เพื่อไม่ให้มันรีเซ็ตหันขวาตอนเบรกจอดนิ่งๆ)
-        if (rb.linearVelocity.sqrMagnitude > 0.1f)
-        {
-            // คำนวณองศาจากแกน X และ Y ของความเร็ว (Atan2 คือสูตรหาองศาจากเวกเตอร์)
-            float angle = Mathf.Atan2(rb.linearVelocity.y, rb.linearVelocity.x) * Mathf.Rad2Deg;
 
-            // สั่งหมุน Object ไปตามองศานั้นในแกน Z
-            transform.rotation = Quaternion.Euler(0, 0, angle);
+    // --- ระบบหันหน้า ซ้าย-ขวา ---
+    void FlipEye()
+    {
+        // เช็คความเร็วแกน X เพื่อสลับหน้า
+        if (rb.linearVelocity.x > 0.1f && !facingRight)
+        {
+            facingRight = true;
+            transform.Rotate(0f, 180f, 0f);
         }
+        else if (rb.linearVelocity.x < -0.1f && facingRight)
+        {
+            facingRight = false;
+            transform.Rotate(0f, 180f, 0f);
+        }
+
+        // เพื่อป้องกันไม่ให้หัวมันหมุนเอียง (กรณีที่โค้ดเก่าทำค้างไว้)
+        transform.rotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y, 0);
     }
 }
