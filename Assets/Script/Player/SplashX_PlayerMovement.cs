@@ -1,34 +1,17 @@
-Ôªøusing System.Collections;
+using System.Collections;
 using UnityEngine;
 
 public class SplashX_PlayerMovement : MonoBehaviour
 {
     [Header("Movement Settings")]
     public float moveSpeed = 8f;
-
-    [Header("Anime Jump Physics (Custom Gravity)")]
-    public float jumpForce = 25f;
-    public float upwardGravityMult = 4f;
-    public float downwardGravityMult = 5f;
-
-    [Header("Hang Time (‡∏Ñ‡πâ‡∏≤‡∏á‡∏Å‡∏•‡∏≤‡∏á‡∏≠‡∏≤‡∏Å‡∏≤‡∏®)")]
-    public float hangTimeVelocityThreshold = 0.5f;
-    public float hangTimeGravityMult = 0.1f;
-
-    [Header("Tetris Drop (Double Tap)")]
-    public float fastFallSpeed = 60f;           // ‚ö° ‡∏Ñ‡∏ß‡∏≤‡∏°‡πÄ‡∏£‡πá‡∏ß‡∏î‡∏¥‡πà‡∏á‡∏û‡∏™‡∏∏‡∏ò‡∏≤ (‡∏≠‡∏±‡∏î‡πÉ‡∏´‡πâ‡πÄ‡∏¢‡∏≠‡∏∞‡πÜ ‡∏à‡∏∞‡πÑ‡∏î‡πâ‡∏ñ‡∏∂‡∏á‡∏û‡∏∑‡πâ‡∏ô‡∏ó‡∏±‡∏ô‡∏ó‡∏µ)
-    public float doubleTapTime = 0.25f;         // ‚è±Ô∏è ‡πÄ‡∏ß‡∏•‡∏≤‡∏ó‡∏µ‡πà‡∏¢‡∏≠‡∏°‡πÉ‡∏´‡πâ‡∏Å‡∏î S ‡πÄ‡∏ö‡∏¥‡πâ‡∏• (‡∏ß‡∏¥‡∏ô‡∏≤‡∏ó‡∏µ)
-    private float lastDownTime = -1f;           // ‡πÄ‡∏Å‡πá‡∏ö‡πÄ‡∏ß‡∏•‡∏≤‡∏ó‡∏µ‡πà‡∏Å‡∏î S ‡∏Ñ‡∏£‡∏±‡πâ‡∏á‡∏•‡πà‡∏≤‡∏™‡∏∏‡∏î
-
-    public int maxJumps = 2;
-    private int jumpsLeft;
-    private bool isFastFalling = false;
+    public float jumpForce = 16f;
 
     [Header("Dash Settings")]
     public float dashSpeed = 20f;
     public float dashDuration = 0.2f;
     public float dashCooldown = 1f;
-    public float dashStaminaCost = 20f;
+    public float dashStaminaCost = 20f; // ‡æ‘Ë¡§Ë“„™È®Ë“¬ Stamina „π°“√·¥™·µË≈–§√—Èß
     private bool isDashing;
     private bool canDash = true;
 
@@ -41,9 +24,9 @@ public class SplashX_PlayerMovement : MonoBehaviour
     [Header("Ground Check")]
     public Transform groundCheck;
     public float groundCheckRadius = 0.2f;
+    // ‡ª≈’Ë¬π™◊ËÕ„ÀÈ™—¥‡®π «Ë“‡™Á§‰¥È∑—Èß Ground ·≈– Platform
     public LayerMask groundAndPlatformLayer;
     private bool isGrounded;
-    private bool wasGrounded;
 
     [Header("Combat Settings")]
     public Transform attackPoint;
@@ -52,219 +35,107 @@ public class SplashX_PlayerMovement : MonoBehaviour
     public int attackDamage = 20;
     public float attackRate = 2f;
     private float nextAttackTime = 0f;
-    private bool isAttacking = false;
-
-    [Header("Components & Effects")]
-    public Animator anim;
-    public AudioSource audioSource;
-    public AudioClip jumpSFX;
-    public AudioClip dashSFX;
-    public AudioClip attackSFX;
-    public AudioClip landSFX;
-    public AudioClip heavyLandSFX;
 
     private Rigidbody2D rb;
     private Collider2D playerCollider;
-    private SplashX_PlayerStats playerStats;
+    private SplashX_PlayerStats playerStats; // ‡™◊ËÕ¡°—∫√–∫∫‡≈◊Õ¥·≈– Stamina
     private float moveInput;
     private bool facingRight = true;
-    private float defaultGravity;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         playerCollider = GetComponent<Collider2D>();
-        playerStats = GetComponent<SplashX_PlayerStats>();
-
-        if (anim == null) anim = GetComponentInChildren<Animator>();
-        if (audioSource == null) audioSource = GetComponent<AudioSource>();
-
-        defaultGravity = rb.gravityScale;
+        playerStats = GetComponent<SplashX_PlayerStats>(); // ¥÷ß §√‘ªµÏ Stats Õ—µ‚π¡—µ‘
     }
 
     void Update()
     {
-        CheckGrounded();
         if (isDashing) return;
 
         moveInput = Input.GetAxisRaw("Horizontal");
-        
 
+        if (groundCheck != null)
+        {
+            // „™È groundAndPlatformLayer „π°“√‡™Á§æ◊Èπ
+            isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundAndPlatformLayer);
+        }
+
+        // 1. √–∫∫°√–‚¥¥ ·≈– ≈ß®“°·æ≈µøÕ√Ï¡
         if (Input.GetKeyDown(jumpKey))
         {
-            if (Input.GetKey(downKey) && isGrounded)
+            if (Input.GetKey(downKey))
             {
                 DropFromPlatform();
             }
-            else if (jumpsLeft > 0)
+            else if (isGrounded)
             {
-                ExecuteJump();
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
             }
         }
 
-        // --- ‡∏£‡∏∞‡∏ö‡∏ö‡∏Å‡∏î S ‡πÄ‡∏ö‡∏¥‡πâ‡∏• (Double Tap) ‡πÄ‡∏û‡∏∑‡πà‡∏≠‡∏î‡∏¥‡πà‡∏á‡∏û‡∏™‡∏∏‡∏ò‡∏≤ ---
-        if (!isGrounded && Input.GetKeyDown(downKey))
+        // 2. √–∫∫·¥™ (‡æ‘Ë¡‡ß◊ËÕπ‰¢ Stamina)
+        if (Input.GetKeyDown(dashKey) && canDash)
         {
-            // ‡∏ñ‡πâ‡∏≤‡∏Å‡∏î‡∏Ñ‡∏£‡∏±‡πâ‡∏á‡∏ó‡∏µ‡πà 2 ‡∏†‡∏≤‡∏¢‡πÉ‡∏ô‡πÄ‡∏ß‡∏•‡∏≤‡∏ó‡∏µ‡πà‡∏Å‡∏≥‡∏´‡∏ô‡∏î
-            if (Time.time - lastDownTime <= doubleTapTime)
+            if (playerStats != null)
             {
-                isFastFalling = true;
+                if (playerStats.UseStamina(dashStaminaCost))
+                {
+                    StartCoroutine(Dash());
+                }
+                else
+                {
+                    Debug.Log("·¥™‰¡Ë‰¥È! Stamina ‰¡ËæÕ");
+                }
             }
-            lastDownTime = Time.time; // ‡∏≠‡∏±‡∏õ‡πÄ‡∏î‡∏ï‡πÄ‡∏ß‡∏•‡∏≤‡∏ó‡∏µ‡πà‡∏Å‡∏î‡∏•‡πà‡∏≤‡∏™‡∏∏‡∏î‡πÑ‡∏ß‡πâ‡πÄ‡∏™‡∏°‡∏≠
+            else
+            {
+                StartCoroutine(Dash());
+            }
         }
 
-        if (Input.GetKeyDown(dashKey) && canDash && !isAttacking)
+        // 3. √–∫∫‚®¡µ’
+        if (Time.time >= nextAttackTime)
         {
-            if (playerStats == null || playerStats.UseStamina(dashStaminaCost))
+            if (Input.GetKeyDown(attackKey))
             {
-                StartCoroutine(DashRoutine());
+                Attack();
+                nextAttackTime = Time.time + 1f / attackRate;
             }
-        }
-
-        if (Time.time >= nextAttackTime && Input.GetKeyDown(attackKey) && !isAttacking)
-        {
-            StartCoroutine(AttackRoutine());
-            nextAttackTime = Time.time + 1f / attackRate;
         }
 
         Flip();
-        UpdateAnimatorParameters();
     }
 
     void FixedUpdate()
     {
         if (isDashing) return;
-
-        if (!isGrounded)
-        {
-            // 1. ‡∏î‡∏¥‡πà‡∏á Tetris (‡∏Ñ‡∏ß‡∏≤‡∏°‡πÄ‡∏£‡πá‡∏ß‡∏û‡∏∏‡πà‡∏á‡∏õ‡∏£‡∏µ‡πä‡∏î)
-            if (isFastFalling)
-            {
-                rb.linearVelocity = new Vector2(moveInput * moveSpeed, -fastFallSpeed);
-                rb.gravityScale = 0f;
-            }
-            else if (Mathf.Abs(rb.linearVelocity.y) < hangTimeVelocityThreshold)
-            {
-                rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
-                rb.gravityScale = defaultGravity * hangTimeGravityMult;
-            }
-            else if (rb.linearVelocity.y < 0)
-            {
-                rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
-                rb.gravityScale = defaultGravity * downwardGravityMult;
-            }
-            else if (rb.linearVelocity.y > 0)
-            {
-                rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
-                rb.gravityScale = defaultGravity * upwardGravityMult;
-            }
-        }
-        else
-        {
-            rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
-            rb.gravityScale = defaultGravity;
-        }
+        rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
     }
 
-    void CheckGrounded()
+    // --- ø—ß°Ï™—π‚®¡µ’ ---
+    void Attack()
     {
-        wasGrounded = isGrounded;
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundAndPlatformLayer);
+        Debug.Log(" «‘ß°’µ“√Ï·≈È«!");
 
-        if (isGrounded)
+        if (attackPoint == null) return;
+
+        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
+
+        Debug.Log("‡®Õ»—µ√Ÿ„π«ß°≈¡®”π«π: " + hitEnemies.Length + " µ—«");
+
+        foreach (Collider2D enemy in hitEnemies)
         {
-            jumpsLeft = maxJumps;
-
-            if (!wasGrounded)
+            SplashX_Enemy enemyScript = enemy.GetComponent<SplashX_Enemy>();
+            if (enemyScript != null)
             {
-                if (isFastFalling)
-                {
-                    if (anim != null) anim.SetTrigger("LandHeavy");
-                    PlaySFX(heavyLandSFX);
-                }
-                else
-                {
-                    if (anim != null) anim.SetTrigger("LandNormal");
-                    PlaySFX(landSFX);
-                }
-                isFastFalling = false;
+                enemyScript.TakeDamage(attackDamage);
+                Debug.Log("‚®¡µ’»—µ√Ÿ: " + enemy.name + " ‰¥È√—∫§«“¡‡ ’¬À“¬: " + attackDamage);
             }
         }
     }
 
-    void ExecuteJump()
-    {
-        rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0);
-        rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-        jumpsLeft--;
-        isFastFalling = false;
-
-        if (anim != null) anim.SetTrigger("Jump");
-        PlaySFX(jumpSFX);
-    }
-
-    void UpdateAnimatorParameters()
-    {
-        if (anim == null) return;
-        anim.SetBool("isGrounded", isGrounded);
-        anim.SetFloat("Speed", Mathf.Abs(rb.linearVelocity.x));
-        anim.SetFloat("yVelocity", rb.linearVelocity.y);
-    }
-
-    private IEnumerator DashRoutine()
-    {
-        canDash = false;
-        isDashing = true;
-        isFastFalling = false;
-
-        if (anim != null) anim.SetTrigger("Dash");
-        PlaySFX(dashSFX);
-
-        float originalGravity = rb.gravityScale;
-        rb.gravityScale = 0f;
-        rb.linearVelocity = new Vector2((facingRight ? 1 : -1) * dashSpeed, 0f);
-
-        yield return new WaitForSeconds(dashDuration);
-
-        rb.gravityScale = originalGravity;
-        rb.linearVelocity = Vector2.zero;
-        isDashing = false;
-
-        yield return new WaitForSeconds(dashCooldown);
-        canDash = true;
-    }
-
-    private IEnumerator AttackRoutine()
-    {
-        isAttacking = true;
-
-        if (anim != null) anim.SetTrigger("Attack");
-        PlaySFX(attackSFX);
-
-        float prevVelocityY = rb.linearVelocity.y;
-        if (!isGrounded && !isFastFalling) rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0);
-
-        if (attackPoint != null)
-        {
-            Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
-            foreach (Collider2D enemy in hitEnemies)
-            {
-                SplashX_Enemy enemyScript = enemy.GetComponent<SplashX_Enemy>();
-                if (enemyScript != null) enemyScript.TakeDamage(attackDamage);
-            }
-        }
-
-        yield return new WaitForSeconds(0.3f);
-
-        isAttacking = false;
-        if (!isGrounded && !isFastFalling) rb.linearVelocity = new Vector2(rb.linearVelocity.x, prevVelocityY);
-    }
-
-    private void PlaySFX(AudioClip clip)
-    {
-        if (audioSource != null && clip != null) audioSource.PlayOneShot(clip);
-    }
-
+    // --- À—πÀπÈ“µ—«≈–§√ ---
     private void Flip()
     {
         if (moveInput > 0 && !facingRight)
@@ -279,20 +150,25 @@ public class SplashX_PlayerMovement : MonoBehaviour
         }
     }
 
+    // --- ø—ß°Ï™—π≈ß®“°·æ≈µøÕ√Ï¡ ---
     private void DropFromPlatform()
     {
         if (groundCheck == null) return;
+
+        // „™È groundAndPlatformLayer ‡æ◊ËÕÀ“«Ë“¬◊πÕ¬ŸË∫π·æ≈µøÕ√Ï¡‰À¡
         Collider2D[] colliders = Physics2D.OverlapCircleAll(groundCheck.position, groundCheckRadius, groundAndPlatformLayer);
+
         foreach (Collider2D col in colliders)
         {
             if (col.GetComponent<PlatformEffector2D>() != null)
             {
                 StartCoroutine(DisableCollisionTemporary(col));
-                break;
+                break; // ‡≈‘°«π≈Ÿª∑—π∑’∑’Ë‡®Õ·æ≈µøÕ√Ï¡
             }
         }
     }
 
+    // --- Coroutine  ”À√—∫ª‘¥°“√™πµÕπ≈ß®“°·æ≈µøÕ√Ï¡™—Ë«§√“« ---
     private IEnumerator DisableCollisionTemporary(Collider2D platformCollider)
     {
         Physics2D.IgnoreCollision(playerCollider, platformCollider, true);
@@ -300,6 +176,28 @@ public class SplashX_PlayerMovement : MonoBehaviour
         Physics2D.IgnoreCollision(playerCollider, platformCollider, false);
     }
 
+    // --- Coroutine  ”À√—∫æÿËß (Dash) ---
+    private IEnumerator Dash()
+    {
+        canDash = false;
+        isDashing = true;
+
+        float originalGravity = rb.gravityScale;
+        rb.gravityScale = 0f;
+
+        rb.linearVelocity = new Vector2((facingRight ? 1 : -1) * dashSpeed, 0f);
+
+        yield return new WaitForSeconds(dashDuration);
+
+        rb.gravityScale = originalGravity;
+        rb.linearVelocity = Vector2.zero;
+        isDashing = false;
+
+        yield return new WaitForSeconds(dashCooldown);
+        canDash = true;
+    }
+
+    // --- «“¥‡ Èπ™Ë«¬‡≈Áß„πÀπÈ“ Scene ---
     private void OnDrawGizmos()
     {
         if (groundCheck != null)
@@ -307,6 +205,7 @@ public class SplashX_PlayerMovement : MonoBehaviour
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
         }
+
         if (attackPoint != null)
         {
             Gizmos.color = Color.green;

@@ -2,7 +2,7 @@
 - Project name: SplashX
 - Unity version: Unity 6000.3.9f1
 - Active game object:
-  - Name: Kyo
-  - Tag: Player
+  - Name: MusicManager
+  - Tag: Untagged
   - Layer: Default
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->
