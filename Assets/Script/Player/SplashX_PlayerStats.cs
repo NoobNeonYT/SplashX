@@ -6,14 +6,14 @@ public class SplashX_PlayerStats : MonoBehaviour
     [Header("Health System")]
     public int maxHp = 100;
     public int currentHp;
-    public float iFrameDuration = 1f; // ระยะเวลาอมตะหลังโดนตี
+    public float iFrameDuration = 1f; // Invincibility period after taking damage
     private bool isInvincible = false;
 
     [Header("Stamina System")]
     public float maxStamina = 100f;
     public float currentStamina;
-    public float staminaRegenRate = 20f; // ความเร็วในการฟื้นฟู
-    public float staminaRegenDelay = 1f; // ดีเลย์ก่อนเริ่มฟื้นฟู (หลังใช้สกิล)
+    public float staminaRegenRate = 20f; // Points per second
+    public float staminaRegenDelay = 1f; // Cooldown before regen starts after use
     private float regenTimer;
 
     [Header("Visual Feedback")]
@@ -26,7 +26,7 @@ public class SplashX_PlayerStats : MonoBehaviour
         currentHp = maxHp;
         currentStamina = maxStamina;
 
-        // หา SpriteRenderer อัตโนมัติเพื่อเอาไว้ทำเอฟเฟกต์กระพริบแดง
+        // Auto-assign SpriteRenderer if not set in Inspector
         if (spriteRenderer == null) spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         if (spriteRenderer != null) originalColor = spriteRenderer.color;
     }
@@ -36,13 +36,14 @@ public class SplashX_PlayerStats : MonoBehaviour
         HandleStaminaRegen();
     }
 
-    // --- ระบบเลือด (HP) ---
+    // --- Health Logic ---
     public void TakeDamage(int damage)
     {
-        if (isInvincible) return; // ถ้าติดอมตะอยู่ ดาเมจจะไม่เข้า
+        // Skip damage if player is currently in I-Frames
+        if (isInvincible) return;
 
         currentHp -= damage;
-        Debug.Log("โดนโจมตี! เลือดเหลือ: " + currentHp);
+        Debug.Log("Player hit! Remaining HP: " + currentHp);
 
         if (currentHp <= 0)
         {
@@ -56,44 +57,50 @@ public class SplashX_PlayerStats : MonoBehaviour
 
     void Die()
     {
-        Debug.Log("Kyo ตายแล้ว!");
-        // เดี๋ยวเราค่อยมาเขียนระบบ Game Over หรือโหลด Checkpoint ตรงนี้ครับ
+        Debug.Log("Player has fallen!");
+        // TODO: Implement Game Over sequence or Checkpoint reload
     }
 
-    // เอฟเฟกต์กระพริบแดง และ อมตะชั่วคราว (I-Frame)
+    // Visual feedback and Invincibility frames
     IEnumerator DamageRoutine()
     {
         isInvincible = true;
 
+        // Brief flash to indicate damage
         if (spriteRenderer != null) spriteRenderer.color = damageColor;
         yield return new WaitForSeconds(0.1f);
         if (spriteRenderer != null) spriteRenderer.color = originalColor;
 
+        // Maintain invincibility for the remaining duration
         yield return new WaitForSeconds(iFrameDuration - 0.1f);
         isInvincible = false;
     }
 
-    // --- ระบบความเหนื่อย (Stamina) ---
-    // ฟังก์ชันนี้จะส่งค่ากลับเป็น true ถ้ามี Stamina พอใช้ และ false ถ้าไม่พอ
+    // --- Stamina Logic ---
+
+    /// <summary>
+    /// Consumes stamina if enough is available.
+    /// </summary>
+    /// <returns>True if action is successful, False if not enough stamina.</returns>
     public bool UseStamina(float amount)
     {
         if (currentStamina >= amount)
         {
             currentStamina -= amount;
-            regenTimer = staminaRegenDelay; // รีเซ็ตเวลาดีเลย์ ไม่ให้มันฟื้นฟูทันทีตอนกำลังแด้ช
+            regenTimer = staminaRegenDelay; // Reset regen delay upon consumption
             return true;
         }
 
-        Debug.Log("Stamina หมด!");
+        Debug.Log("Out of Stamina!");
         return false;
     }
 
-    // ฟื้นฟู Stamina อัตโนมัติ
+    // Automatically recover stamina over time
     void HandleStaminaRegen()
     {
         if (regenTimer > 0)
         {
-            regenTimer -= Time.deltaTime; // นับถอยหลังดีเลย์
+            regenTimer -= Time.deltaTime; // Countdown the delay timer
         }
         else if (currentStamina < maxStamina)
         {

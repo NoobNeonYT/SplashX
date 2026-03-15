@@ -2,12 +2,17 @@ using UnityEngine;
 
 public class SplashX_DiceBomb : MonoBehaviour
 {
-    public float fallSpeed = 8f;       // ความเร็วตอนตก (ต้องช้ากว่าท่าทุบ)
-    public float explosionRadius = 2f; // รัศมีระเบิด
-    public int damage = 1;             // ดาเมจลูกเต๋า
-    public LayerMask groundLayer;      // เลเยอร์พื้น
-    public LayerMask playerLayer;      // เลเยอร์ผู้เล่น
-    public GameObject explosionEffect; // เอฟเฟกต์ตอนระเบิด (ถ้ามี)
+    [Header("Movement")]
+    public float fallSpeed = 8f;       // Vertical descent speed (slower than Smash attack)
+
+    [Header("Explosion Settings")]
+    public float explosionRadius = 2f; // Area of effect radius
+    public int damage = 1;
+    public GameObject explosionEffect; // Visual effect prefab for the explosion
+
+    [Header("Layer Detection")]
+    public LayerMask groundLayer;
+    public LayerMask playerLayer;
 
     private bool isExploding = false;
 
@@ -15,10 +20,10 @@ public class SplashX_DiceBomb : MonoBehaviour
     {
         if (isExploding) return;
 
-        // ตกลงมาตรงๆ
+        // Move downward at a constant velocity
         transform.Translate(Vector3.down * fallSpeed * Time.deltaTime);
 
-        // เช็คว่าแตะพื้นหรือยัง
+        // Simple raycast to detect impact with the ground layer
         RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 0.5f, groundLayer);
         if (hit.collider != null)
         {
@@ -30,7 +35,7 @@ public class SplashX_DiceBomb : MonoBehaviour
     {
         isExploding = true;
 
-        // วงกลมเช็คว่าผู้เล่นอยู่ในรัศมีระเบิดไหม
+        // Check for player within the explosion radius using an overlap circle
         Collider2D playerHit = Physics2D.OverlapCircle(transform.position, explosionRadius, playerLayer);
         if (playerHit != null)
         {
@@ -38,17 +43,20 @@ public class SplashX_DiceBomb : MonoBehaviour
             if (stats != null) stats.TakeDamage(damage);
         }
 
-        // เสกเอฟเฟกต์ระเบิด (ถ้าใส่ไว้)
-        if (explosionEffect != null) Instantiate(explosionEffect, transform.position, Quaternion.identity);
+        // Spawn visual feedback if assigned
+        if (explosionEffect != null)
+        {
+            Instantiate(explosionEffect, transform.position, Quaternion.identity);
+        }
 
-        // ทำลายลูกเต๋าทิ้ง
+        // Cleanup the projectile object
         Destroy(gameObject);
     }
 
-    // วาดเส้นรัศมีระเบิดสีส้มให้เห็นตอนเทส
+    // Visualize the explosion radius in the Scene View when the object is selected
     private void OnDrawGizmosSelected()
     {
-        Gizmos.color = new Color(1, 0.5f, 0);
+        Gizmos.color = new Color(1, 0.5f, 0); // Orange color for visual clarity
         Gizmos.DrawWireSphere(transform.position, explosionRadius);
     }
 }

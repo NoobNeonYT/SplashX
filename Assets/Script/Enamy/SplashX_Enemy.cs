@@ -2,20 +2,25 @@ using UnityEngine;
 
 public class SplashX_Enemy : MonoBehaviour
 {
-    // วาง [Header] ไว้เหนือตัวแปรเท่านั้น ห้ามวางนอก class
+    // Note: Always place [Header] attributes inside the class and above the variables.
     [Header("Enemy Stats")]
     public int maxHealth = 100;
     public int currentHealth;
 
     void Start()
     {
+        // Initialize health at the start of the game
         currentHealth = maxHealth;
     }
 
+    /// <summary>
+    /// Reduces current health and checks for death condition.
+    /// </summary>
+    /// <param name="damage">The amount of health to subtract.</param>
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
-        Debug.Log("Enemy took damage! HP left: " + currentHealth);
+        Debug.Log("Enemy took damage! Remaining HP: " + currentHealth);
 
         if (currentHealth <= 0)
         {
@@ -25,7 +30,8 @@ public class SplashX_Enemy : MonoBehaviour
 
     void Die()
     {
-        Debug.Log("Enemy Died!");
+        // Add death effects or drop items here before destruction
+        Debug.Log("Enemy has been defeated!");
         Destroy(gameObject);
     }
 }
