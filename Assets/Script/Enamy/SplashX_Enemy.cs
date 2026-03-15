@@ -5,7 +5,7 @@ public class SplashX_Enemy : MonoBehaviour
     // วาง [Header] ไว้เหนือตัวแปรเท่านั้น ห้ามวางนอก class
     [Header("Enemy Stats")]
     public int maxHealth = 100;
-    private int currentHealth;
+    public int currentHealth;
 
     void Start()
     {
