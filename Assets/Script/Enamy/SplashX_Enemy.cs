@@ -66,7 +66,7 @@ public class SplashX_Enemy : MonoBehaviour
         isStunned = true;
 
         // หยุดความเร็วของศัตรูให้เป็น 0 ทันที (เวลาโดนตีจะได้ไม่ไถลเข้ามาหาเรา)
-        if (rb != null)
+        if (rb != null) 
         {
             rb.linearVelocity = Vector2.zero;
         }
