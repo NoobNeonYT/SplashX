@@ -82,6 +82,10 @@ public class SplashX_PlayerMovement : MonoBehaviour
     private bool facingRight = true;
     private float defaultGravity;
 
+    [Header("Hurt Settings")]
+    public float hurtDuration = 0.3f; // เวลาที่ผู้เล่นจะขยับไม่ได้ตอนโดนตี
+    private bool isHurt = false;
+
     [Header("Character Models (ระบบสลับร่าง)")]
     public GameObject boneModel;
     public Animator boneAnim;
@@ -104,9 +108,13 @@ public class SplashX_PlayerMovement : MonoBehaviour
     void Update()
     {
         CheckGrounded();
+
+        // 🔥 ย้ายมาไว้ตรงนี้! เพื่อให้ส่งค่าให้ Animator ทุกเฟรม ห้ามโดนบรรทัด return ตัดจบเด็ดขาด
+        UpdateAnimatorParameters();
+
+        if (isHurt) return;
         if (isDashing) return;
 
-        // ล็อกไม่ให้เดินหรือกระโดดตอนกำลังฟันดาบ
         if (!isAttacking)
         {
             moveInput = Input.GetAxisRaw("Horizontal");
@@ -125,7 +133,7 @@ public class SplashX_PlayerMovement : MonoBehaviour
         }
         else
         {
-            moveInput = 0f; // ถ้ากำลังตี บังคับให้ความเร็วแกน X เป็น 0
+            moveInput = 0f;
         }
 
         if (Input.GetKeyDown(dashKey) && canDash && !isAttacking)
@@ -133,7 +141,6 @@ public class SplashX_PlayerMovement : MonoBehaviour
             if (playerStats == null || playerStats.UseStamina(dashStaminaCost)) StartCoroutine(DashRoutine());
         }
 
-        // ระบบเช็คการโจมตี (แยกท่ากด)
         if (Time.time >= nextAttackTime && !isAttacking)
         {
             if (Input.GetKeyDown(normalAttackKey))
@@ -149,11 +156,11 @@ public class SplashX_PlayerMovement : MonoBehaviour
         }
 
         Flip();
-        UpdateAnimatorParameters();
     }
 
     void FixedUpdate()
     {
+        if (isHurt) return;
         if (isDashing) return;
 
         // 🔥 แก้ตรงนี้: แยกระบบแช่แข็งฟิสิกส์ให้ชัดเจน
@@ -243,9 +250,17 @@ public class SplashX_PlayerMovement : MonoBehaviour
         boneAnim.SetBool("isGrounded", isGrounded);
         boneAnim.SetFloat("Speed", Mathf.Abs(rb.linearVelocity.x));
 
-        // 🔥 ไม้ตายแก้บั๊ก Fall: ถ้าอยู่บนพื้น บังคับส่งเลข 0 ไปให้ Animator เลย 
-        // ตัดปัญหาเศษฟิสิกส์ติดลบ (-0.001) ไปกวนประสาท Animator
-        boneAnim.SetFloat("yVelocity", isGrounded ? 0f : rb.linearVelocity.y);
+        // 🔥 เติมบรรทัดนี้เข้าไป! เพื่อลิงก์เกราะป้องกันที่เราเพิ่งสร้าง
+        boneAnim.SetBool("isDashing", isDashing);
+
+        if (isDashing || isAttacking || isHurt)
+        {
+            boneAnim.SetFloat("yVelocity", 0f);
+        }
+        else
+        {
+            boneAnim.SetFloat("yVelocity", isGrounded ? 0f : rb.linearVelocity.y);
+        }
     }
 
     private IEnumerator DashRoutine()
@@ -254,7 +269,12 @@ public class SplashX_PlayerMovement : MonoBehaviour
         isDashing = true;
         isFastFalling = false;
 
-        if (boneAnim != null) boneAnim.SetTrigger("Dash");
+        if (boneAnim != null)
+        {
+            boneAnim.SetFloat("yVelocity", 0f);
+
+            boneAnim.SetTrigger("Dash");
+        }
         PlaySFX(dashSFX);
 
         float originalGravity = rb.gravityScale;
@@ -364,6 +384,50 @@ public class SplashX_PlayerMovement : MonoBehaviour
         Physics2D.IgnoreCollision(playerCollider, platformCollider, true);
         yield return new WaitForSeconds(0.5f);
         Physics2D.IgnoreCollision(playerCollider, platformCollider, false);
+    }
+    // ฟังก์ชันนี้จะถูกเรียกจากสคริปต์หลอดเลือด (SplashX_PlayerStats)
+    public void TriggerHurt()
+    {
+        // ไม้ตาย! สั่งหยุด Coroutine ทั้งหมด (หยุดท่าฟัน ท่าแดช ที่กำลังค้างอยู่ทันที)
+        StopAllCoroutines(); 
+        StartCoroutine(HurtRoutine());
+    }
+
+    private IEnumerator HurtRoutine()
+    {
+        isHurt = true;
+        
+        // คืนค่าสถานะต่างๆ ให้กลับเป็นปกติ ป้องกันบั๊กค้าง
+        isAttacking = false;
+        isDashing = false;
+        canDash = true;
+        isFastFalling = false;
+
+        // บังคับสลับกลับมาร่างกระดูก (เผื่อโดนตีตอนกำลังวาดดาบ FbF อยู่)
+        if (fbfAttackModel != null) fbfAttackModel.SetActive(false);
+        if (boneModel != null) boneModel.SetActive(true);
+
+        // หยุดความเร็วแกน X ไม่ให้ไถล แต่ปล่อยแกน Y ไว้เผื่อโดนตีกลางอากาศจะได้ร่วงลงมา
+        rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
+
+        // สั่งเล่นอนิเมชันชะงัก
+        if (boneAnim != null)
+        {
+            boneAnim.ResetTrigger("Attack");
+            boneAnim.ResetTrigger("Dash");
+            boneAnim.SetTrigger("Hurt"); // ⚠️ เดี๋ยวเราไปสร้างสวิตช์นี้ใน Animator ครับ
+        }
+
+        // รอจนกว่าจะหายชะงัก
+        yield return new WaitForSeconds(hurtDuration);
+
+        isHurt = false;
+        
+        // พอหายชะงัก ถ้าอยู่บนพื้นให้กลับไปยืนท่าปกติ
+        if (isGrounded && boneAnim != null)
+        {
+            boneAnim.Play("Player_idle", -1, 0f);
+        }
     }
 
     private void OnDrawGizmos()

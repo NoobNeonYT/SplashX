@@ -53,6 +53,11 @@ public class SplashX_PlayerStats : MonoBehaviour
         {
             StartCoroutine(DamageRoutine());
         }
+        SplashX_PlayerMovement movement = GetComponent<SplashX_PlayerMovement>();
+        if (movement != null)
+        {
+            movement.TriggerHurt();
+        }
     }
 
     void Die()
