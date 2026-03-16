@@ -293,6 +293,8 @@ public class SplashX_PlayerMovement : MonoBehaviour
 
         // ... โค้ดด้านบนของ AttackRoutine เหมือนเดิม ...
 
+        // ... โค้ดด้านบนของ AttackRoutine เหมือนเดิม ...
+
         yield return new WaitForSeconds(animDuration);
 
         if (fbfAttackModel != null) fbfAttackModel.SetActive(false);
@@ -302,24 +304,26 @@ public class SplashX_PlayerMovement : MonoBehaviour
 
             if (boneAnim != null)
             {
-                // ล้างคำสั่งตอนลงพื้น
+                // 🔥 1. ยัดข้อมูลใส่สมองมันทันทีในเสี้ยววินาทีที่ตื่น! ตัดปัญหาตื่นมาเบลอ
+                boneAnim.SetBool("isGrounded", isGrounded);
+                boneAnim.SetFloat("yVelocity", 0f);
+                boneAnim.SetFloat("Speed", 0f);
+
+                // 🔥 2. ล้างคำสั่งตกค้างให้หมด
                 boneAnim.ResetTrigger("LandNormal");
                 boneAnim.ResetTrigger("LandHeavy");
-
-                // 🔥 เพิ่ม 2 บรรทัดนี้: ล้างคำสั่งพุ่งและกระโดดที่อาจจะกดค้างไว้ก่อนสลับร่างทิ้งให้หมด!
                 boneAnim.ResetTrigger("Dash");
                 boneAnim.ResetTrigger("Jump");
 
-                // บังคับให้เล่นท่า Idle ทันทีที่อยู่บนพื้น
+                // 🔥 3. บังคับยัดเข้าท่า Idle แบบฮาร์ดคอร์ (-1, 0f คือการบังคับเล่นเฟรมแรกทันที)
                 if (isGrounded)
                 {
-                    boneAnim.Play("Player_idle");
+                    boneAnim.Play("Player_idle", -1, 0f);
                 }
             }
         }
 
         isAttacking = false;
-        // ระบบจะคืนค่าแรงโน้มถ่วงเองใน FixedUpdate รอบถัดไป
     }
 
     private void PlaySFX(AudioClip clip)
