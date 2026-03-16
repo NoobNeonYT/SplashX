@@ -7298,7 +7298,7 @@ MonoBehaviour:
   doubleTapTime: 0.25
   maxJumps: 2
   dashSpeed: 20
-  dashDuration: 0.2
+  dashDuration: 0.4
   dashCooldown: 1
   dashStaminaCost: 20
   jumpKey: 107
@@ -7330,6 +7330,7 @@ MonoBehaviour:
   attackSFX: {fileID: 0}
   landSFX: {fileID: 0}
   heavyLandSFX: {fileID: 0}
+  hurtDuration: 0.3
   boneModel: {fileID: 426430716}
   boneAnim: {fileID: 1590010473}
   fbfAttackModel: {fileID: 38846445}
