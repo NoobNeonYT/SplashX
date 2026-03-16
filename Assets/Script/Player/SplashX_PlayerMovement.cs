@@ -46,6 +46,7 @@ public class SplashX_PlayerMovement : MonoBehaviour
     private bool wasGrounded;
 
     [Header("Combat Settings")]
+    public float attackAnimTime = 0.5f;
     public Transform attackPoint;
     public float attackRange = 0.5f;
     public LayerMask enemyLayers;
@@ -69,6 +70,13 @@ public class SplashX_PlayerMovement : MonoBehaviour
     private float moveInput;
     private bool facingRight = true;
     private float defaultGravity;
+
+    [Header("Character Models (ระบบสลับร่าง)")]
+    public GameObject boneModel;      // ลากก้อน MainCharacter มาใส่
+    public Animator boneAnim;         // ลากก้อน MainCharacter มาใส่ (เพื่อส่งค่าเดิน/วิ่ง)
+
+    public GameObject fbfAttackModel; // ลากก้อน FbF_Attack มาใส่
+    public Animator fbfAnim;          // ลากก้อน FbF_Attack มาใส่ (เพื่อสั่งเล่นท่าตี)
 
     void Start()
     {
@@ -205,10 +213,11 @@ public class SplashX_PlayerMovement : MonoBehaviour
 
     void UpdateAnimatorParameters()
     {
-        if (anim == null) return;
-        anim.SetBool("isGrounded", isGrounded);
-        anim.SetFloat("Speed", Mathf.Abs(rb.linearVelocity.x));
-        anim.SetFloat("yVelocity", rb.linearVelocity.y);
+        // ส่งค่าฟิสิกส์ให้ Animator ของร่างกระดูกเท่านั้น
+        if (boneAnim == null) return;
+        boneAnim.SetBool("isGrounded", isGrounded);
+        boneAnim.SetFloat("Speed", Mathf.Abs(rb.linearVelocity.x));
+        boneAnim.SetFloat("yVelocity", rb.linearVelocity.y);
     }
 
     private IEnumerator DashRoutine()
@@ -238,12 +247,19 @@ public class SplashX_PlayerMovement : MonoBehaviour
     {
         isAttacking = true;
 
-        if (anim != null) anim.SetTrigger("Attack");
+        // 1. สลับร่าง! (ปิดกระดูก เปิดภาพวาด)
+        if (boneModel != null) boneModel.SetActive(false);
+        if (fbfAttackModel != null) fbfAttackModel.SetActive(true);
+
+        // 2. สั่งเล่นอนิเมชันโจมตีที่ร่างภาพวาด
+        if (fbfAnim != null) fbfAnim.SetTrigger("Attack");
         PlaySFX(attackSFX);
 
+        // ล็อกฟิสิกส์ตอนตี
         float prevVelocityY = rb.linearVelocity.y;
         if (!isGrounded && !isFastFalling) rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0);
 
+        // คำนวณดาเมจ
         if (attackPoint != null)
         {
             Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
@@ -254,9 +270,15 @@ public class SplashX_PlayerMovement : MonoBehaviour
             }
         }
 
-        yield return new WaitForSeconds(0.3f);
+        yield return new WaitForSeconds(attackAnimTime);
+
+        // สลับร่างกลับ! (ปิดภาพวาด เปิดกระดูก)
+        if (fbfAttackModel != null) fbfAttackModel.SetActive(false);
+        if (boneModel != null) boneModel.SetActive(true);
 
         isAttacking = false;
+
+        // คืนค่าฟิสิกส์
         if (!isGrounded && !isFastFalling) rb.linearVelocity = new Vector2(rb.linearVelocity.x, prevVelocityY);
     }
 

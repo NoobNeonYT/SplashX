@@ -271,8 +271,8 @@ TextureImporter:
         serializedVersion: 2
         x: 866
         y: 0
-        width: 866
-        height: 1299
+        width: 825
+        height: 1295
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -291,10 +291,10 @@ TextureImporter:
       name: 01_ SkillAttack_5
       rect:
         serializedVersion: 2
-        x: 1732
+        x: 1686
         y: 0
-        width: 866
-        height: 1299
+        width: 912
+        height: 1295
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
