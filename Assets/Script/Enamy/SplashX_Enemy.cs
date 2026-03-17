@@ -3,6 +3,10 @@ using UnityEngine;
 
 public class SplashX_Enemy : MonoBehaviour
 {
+    [Header("Drop System")]
+    public GameObject healthPickupPrefab; // ลาก Prefab ไอเทมฮีลมาใส่ช่องนี้
+    [Range(0f, 1f)]
+    public float dropChance = 0.10f; // โอกาส 10% (0.10 = 10%, 1.0 = 100%)
     [Header("Enemy Stats")]
     public int maxHealth = 100;
     public int currentHealth;
@@ -80,8 +84,19 @@ public class SplashX_Enemy : MonoBehaviour
 
     void Die()
     {
-        // Add death effects or drop items here before destruction
         Debug.Log("Enemy has been defeated!");
+
+        // 🎲 ทอยเต๋าสุ่มดรอปไอเทม! (เงื่อนไข: ต้องไม่ใช่บอส และต้องมีตัว Prefab ใส่ไว้)
+        if (!isBoss && healthPickupPrefab != null)
+        {
+            // Random.value จะสุ่มเลขตั้งแต่ 0.0 ถึง 1.0
+            if (Random.value <= dropChance) 
+            {
+                // ถ้าสุ่มได้เลขน้อยกว่าหรือเท่ากับ 0.10 (โอกาส 10%) ให้เสกไอเทมตรงที่มอนสเตอร์ตาย
+                Instantiate(healthPickupPrefab, transform.position, Quaternion.identity);
+            }
+        }
+
         Destroy(gameObject);
     }
 }

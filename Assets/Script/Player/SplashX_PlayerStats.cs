@@ -72,6 +72,21 @@ public class SplashX_PlayerStats : MonoBehaviour
         }
     }
 
+    public void Heal(int amount)
+    {
+        if (isDead) return; // ตายแล้วฮีลไม่ขึ้น
+
+        currentHp += amount;
+        if (currentHp > maxHp)
+        {
+            currentHp = maxHp; // ล็อกไม่ให้เลือดล้นหลอด
+        }
+
+        Debug.Log("Healed! Current HP: " + currentHp);
+
+        // 🌟 ถ้าอยากให้ตัวกระพริบสีเขียวตอนฮีล ก็เพิ่ม Coroutine คล้ายๆ ตอนโดนตีได้เลยครับ
+    }
+
     // 💀 ระบบตาย (แทนที่ฟังก์ชัน Die เดิม)
     private IEnumerator DeathRoutine()
     {
