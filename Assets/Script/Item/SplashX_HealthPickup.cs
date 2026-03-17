@@ -15,8 +15,13 @@ public class SplashX_HealthPickup : MonoBehaviour
 
     [Header("Hover & Spin (ลอยและหมุน)")]
     public float spinSpeed = 150f;
-    public float hoverHeight = 0.2f; // ลอยเหนือพื้นแค่นี้
-    public float hoverSpeed = 4f;    // ความเร็วตอนลอยขึ้นลง
+    public float baseOffset = 0.5f;   // 🔥 ดันภาพขึ้นจากพื้น (ปรับเลขนี้เพื่อแก้จมดิน)
+    public float bounceHeight = 0.2f; // 🔥 ระยะเด้งขึ้นลง (Sine Wave)
+    public float hoverSpeed = 4f;     // ความเร็วตอนลอยขึ้นลง
+
+    [Header("Ground Check (กันสะดุด)")]
+    public LayerMask groundLayer; // ลากเลเยอร์พื้นมาใส่ช่องนี้
+    public float groundCheckDistance = 0.3f; // ความยาวเลเซอร์เช็คพื้น (ดึงเส้นสีแดงในหน้า Scene ให้แตะพื้นพอดี)
 
     private bool isSettled = false;
     private float settledY;
@@ -42,43 +47,51 @@ public class SplashX_HealthPickup : MonoBehaviour
 
     void Update()
     {
-        // ท่าเต้นเรียกร้องความสนใจ (จะทำงานก็ต่อเมื่อตกถึงพื้นแล้ว)
-        if (isSettled)
+        // 1. ระบบเช็คพื้นระหว่างที่ไอเทมกำลังร่วง
+        if (!isSettled)
         {
-            // 🔥 หมุนแกน Y แทน (ใส่ค่าตรงกลาง) ภาพจะพลิกและดูแบนลงเหมือนเหรียญหมุน
+            // เช็คเฉพาะตอนที่ไอเทมกำลังตก (แกน Y ติดลบ) จะได้ไม่บั๊กตอนเพิ่งเด้งขึ้นฟ้า
+            if (rb != null && rb.linearVelocity.y <= 0)
+            {
+                // ยิงเลเซอร์เช็คพื้นลงไปด้านล่าง
+                RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, groundLayer);
+
+                if (hit.collider != null)
+                {
+                    isSettled = true;
+
+                    // ปิดฟิสิกส์แรงโน้มถ่วงทิ้งทันทีที่แตะพื้น
+                    rb.bodyType = RigidbodyType2D.Kinematic;
+                    rb.linearVelocity = Vector2.zero;
+                    rb.angularVelocity = 0f;
+
+                    // 🔥 ยึดตำแหน่งแกน Y ที่เลเซอร์ชนพื้น + ดันขึ้นด้วย baseOffset กันภาพจม
+                    settledY = hit.point.y + baseOffset;
+                }
+            }
+        }
+        // 2. ท่าเต้นเรียกร้องความสนใจ (จะทำงานก็ต่อเมื่อตกถึงพื้นแล้ว)
+        else
+        {
+            // หมุนแกน Y ภาพจะพลิกและดูแบนลงเหมือนเหรียญหมุน
             transform.Rotate(0, spinSpeed * Time.deltaTime, 0);
 
-            // เด้งขึ้นลงเบาๆ ด้วยสมการ Sine Wave
-            float newY = settledY + (Mathf.Sin(Time.time * hoverSpeed) * hoverHeight);
+            // 🔥 เด้งขึ้นลงเบาๆ ด้วยสมการ Sine Wave ที่แยกความสูงการเด้งไว้แล้ว
+            float newY = settledY + (Mathf.Sin(Time.time * hoverSpeed) * bounceHeight);
             transform.position = new Vector2(transform.position.x, newY);
         }
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
+    // เอาไว้วาดเส้นสีแดงให้เห็นระยะเช็คพื้นในหน้า Scene (ตอนยังไม่กด Play)
+    private void OnDrawGizmos()
     {
-        // เช็คว่าตกถึง "พื้น" หรือยัง (อะไรก็ได้ที่ไม่ใช่ผู้เล่น และต้องชนจากด้านล่าง)
-        if (!isSettled && !collision.gameObject.CompareTag("Player"))
-        {
-            if (collision.contacts.Length > 0 && collision.contacts[0].normal.y > 0.5f)
-            {
-                isSettled = true;
-                if (rb != null)
-                {
-                    // พอถึงพื้นปุ๊บ สั่งปิดระบบแรงโน้มถ่วง (จะได้ไม่หล่นทะลุพื้นตอนลอย) และเบรกความเร็วให้เป็น 0
-                    rb.bodyType = RigidbodyType2D.Kinematic;
-                    rb.linearVelocity = Vector2.zero;
-                    rb.angularVelocity = 0f;
-                }
-                // เซฟตำแหน่งแกน Y ตรงพื้นเอาไว้เป็นจุดกึ่งกลางตอนลอยขึ้นลง
-                settledY = transform.position.y + hoverHeight;
-            }
-        }
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(transform.position, transform.position + Vector3.down * groundCheckDistance);
     }
 
     // ฟังก์ชันนี้เช็คตอนผู้เล่นเดินมาชนกล่องเพื่อเก็บ
     void OnTriggerEnter2D(Collider2D other)
     {
-        // ถ้ายังไม่หมดเวลาดีเลย์ ห้ามเก็บเด็ดขาด! ทิ้งให้ผู้เล่นดูน้ำลายไหลไปก่อน
         if (!canPickup) return;
 
         if (other.CompareTag("Player"))
