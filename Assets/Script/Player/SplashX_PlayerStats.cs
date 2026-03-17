@@ -138,16 +138,14 @@ public class SplashX_PlayerStats : MonoBehaviour
         isDead = false;
         isInvincible = false;
 
-        // คืนสีเดิมเผื่อตายตอนตัวแดง
         if (spriteRenderer != null) spriteRenderer.color = originalColor;
 
         if (movement != null)
         {
-            movement.enabled = true; // ปลดล็อกให้เดินได้
-            if (movement.boneAnim != null)
-            {
-                movement.boneAnim.Play("Player_idle");
-            }
+            movement.enabled = true; // เปิดให้กลับมาทำงาน
+
+            // 🔥 เรียกฟังก์ชันล้างสมองตรงนี้! เพื่อแก้บั๊กตายแล้วค้าง
+            movement.ResetAllStatesForRevive();
         }
     }
 

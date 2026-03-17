@@ -3,22 +3,27 @@ using UnityEngine;
 
 public class SplashX_PlayerMovement : MonoBehaviour
 {
+    // 🔥 ระบบจำประเภทปุ่มที่กดล่วงหน้า
+    private enum QueuedAttack { None, Normal, Skill }
+    private QueuedAttack queuedAttack = QueuedAttack.None;
+
     [Header("Movement Settings")]
     public float moveSpeed = 8f;
 
-    [Header("Anime Jump Physics (Custom Gravity)")]
+    [Header("Anime Jump Physics")]
     public float jumpForce = 25f;
     public float upwardGravityMult = 4f;
     public float downwardGravityMult = 5f;
 
-    [Header("Hang Time (ค้างกลางอากาศ)")]
+    [Header("Hang Time & Tetris Drop")]
     public float hangTimeVelocityThreshold = 0.5f;
     public float hangTimeGravityMult = 0.1f;
-
-    [Header("Tetris Drop (Double Tap)")]
     public float fastFallSpeed = 60f;
     public float doubleTapTime = 0.25f;
     private float lastDownTime = -1f;
+    public int fastFallDamage = 30;
+    public float fastFallHitRadius = 3f;
+    public GameObject heavyLandVFX;
 
     public int maxJumps = 2;
     private int jumpsLeft;
@@ -36,7 +41,6 @@ public class SplashX_PlayerMovement : MonoBehaviour
     public KeyCode jumpKey = KeyCode.K;
     public KeyCode dashKey = KeyCode.L;
     public KeyCode downKey = KeyCode.S;
-    // (ลบ attackKey ของเดิมทิ้งไปแล้ว เพราะเราแยกเป็น Normal กับ Heavy ด้านล่างแทน)
 
     [Header("Ground Check")]
     public Transform groundCheck;
@@ -45,33 +49,53 @@ public class SplashX_PlayerMovement : MonoBehaviour
     private bool isGrounded;
     private bool wasGrounded;
 
-    // 🔥 โซนที่เพิ่มเข้ามาใหม่: แยกตัวแปรให้ท่าโจมตีแต่ละแบบ
-    [Header("Combat - Normal Attack (ท่าฟันปกติ)")]
-    public KeyCode normalAttackKey = KeyCode.U;
-    public Vector2 normalHitBox = new Vector2(2f, 1f);
-    public int normalDamage = 20;
-    public float normalAnimTime = 0.5f;
-
-    [Header("Combat - Heavy Attack (ท่าฟันหนัก)")]
-    public KeyCode heavyAttackKey = KeyCode.I; // สมมติให้เป็นปุ่ม I
-    public Vector2 heavyHitBox = new Vector2(4f, 3f);
-    public int heavyDamage = 50;
-    public float heavyAnimTime = 0.8f;
-
-    [Header("Combat - System")]
+    [Header("Combat - Combo System")]
+    public KeyCode attackKey = KeyCode.U;
+    public KeyCode skillKey = KeyCode.J;
     public Transform attackPoint;
-    public Vector2 debugHitBoxSize = new Vector2(2f, 1f); // ตลับเมตรเอาไว้วัดระยะเฉยๆ
     public LayerMask enemyLayers;
-    public float attackRate = 2f;
-    private float nextAttackTime = 0f;
+
+    [Header("Hit 1: Normal (U)")]
+    public Vector2 hit1HitBox = new Vector2(2f, 1f);
+    public int hit1Damage = 15;
+    public float hit1AnimTime = 0.4f;
+    public AudioClip hit1SFX;
+
+    [Header("Hit 2: Upward Slash (U -> U)")]
+    public Vector2 hit2HitBox = new Vector2(2f, 2.5f);
+    public int hit2Damage = 20;
+    public float hit2AnimTime = 0.4f;
+    public AudioClip hit2SFX;
+
+    [Header("Hit 3: Ground Smash (U -> U -> U)")]
+    public float hit3Radius = 3f;
+    public int hit3Damage = 20;
+    public float hit3AnimTime = 0.6f;
+    public AudioClip hit3SFX;
+    public GameObject hit3VFX;
+
+    [Header("Skill: Shotgun (J) - ร่างกระดูก")]
+    public GameObject shotgunProjectilePrefab;
+    public float shotgunKnockbackForce = 5f;
+    public float shotgunAnimTime = 0.5f;
+    public AudioClip shotgunSFX;
+
+    [Header("Skill Combo 1: Mid-Range (U -> J)")]
+    public Vector2 skill1HitBox = new Vector2(4f, 1f);
+    public int skill1Damage = 25;
+    public float skill1AnimTime = 0.5f;
+    public AudioClip skill1SFX;
+    public GameObject skill1VFX;
+
     private bool isAttacking = false;
+    private bool isShotgunKnockback = false;
+    private int comboStep = 0;
 
     [Header("Components & Effects")]
     public Animator anim;
     public AudioSource audioSource;
     public AudioClip jumpSFX;
     public AudioClip dashSFX;
-    public AudioClip attackSFX;
     public AudioClip landSFX;
     public AudioClip heavyLandSFX;
 
@@ -83,13 +107,12 @@ public class SplashX_PlayerMovement : MonoBehaviour
     private float defaultGravity;
 
     [Header("Hurt Settings")]
-    public float hurtDuration = 0.3f; // เวลาที่ผู้เล่นจะขยับไม่ได้ตอนโดนตี
+    public float hurtDuration = 0.3f;
     private bool isHurt = false;
 
-    [Header("Character Models (ระบบสลับร่าง)")]
+    [Header("Character Models")]
     public GameObject boneModel;
     public Animator boneAnim;
-
     public GameObject fbfAttackModel;
     public Animator fbfAnim;
 
@@ -108,12 +131,20 @@ public class SplashX_PlayerMovement : MonoBehaviour
     void Update()
     {
         CheckGrounded();
-
-        // 🔥 ย้ายมาไว้ตรงนี้! เพื่อให้ส่งค่าให้ Animator ทุกเฟรม ห้ามโดนบรรทัด return ตัดจบเด็ดขาด
         UpdateAnimatorParameters();
 
-        if (isHurt) return;
-        if (isDashing) return;
+        if (isHurt || isDashing) return;
+
+        if (Input.GetKeyDown(attackKey))
+        {
+            if (!isAttacking) StartCoroutine(ComboAttackRoutine());
+            else queuedAttack = QueuedAttack.Normal;
+        }
+        else if (Input.GetKeyDown(skillKey))
+        {
+            if (!isAttacking) StartCoroutine(ShotgunRoutine());
+            else queuedAttack = QueuedAttack.Skill;
+        }
 
         if (!isAttacking)
         {
@@ -141,34 +172,19 @@ public class SplashX_PlayerMovement : MonoBehaviour
             if (playerStats == null || playerStats.UseStamina(dashStaminaCost)) StartCoroutine(DashRoutine());
         }
 
-        if (Time.time >= nextAttackTime && !isAttacking)
-        {
-            if (Input.GetKeyDown(normalAttackKey))
-            {
-                StartCoroutine(AttackRoutine(normalHitBox, normalDamage, normalAnimTime));
-                nextAttackTime = Time.time + 1f / attackRate;
-            }
-            else if (Input.GetKeyDown(heavyAttackKey))
-            {
-                StartCoroutine(AttackRoutine(heavyHitBox, heavyDamage, heavyAnimTime));
-                nextAttackTime = Time.time + 1f / attackRate;
-            }
-        }
-
         Flip();
     }
 
     void FixedUpdate()
     {
-        if (isHurt) return;
-        if (isDashing) return;
+        if (isHurt || isDashing) return;
 
-        // 🔥 แก้ตรงนี้: แยกระบบแช่แข็งฟิสิกส์ให้ชัดเจน
         if (isAttacking)
         {
-            // ถ้าทำ A (ยืนตีบนพื้น) -> ล็อกความเร็วแกน X เป็น 0 ไม่ให้ไถล แต่ปล่อยแรงโน้มถ่วงไว้ให้เท้ากดติดพื้นแน่นๆ
-            // ถ้าทำ B (ตีกลางอากาศ) -> ล็อกทั้ง X, Y และแรงโน้มถ่วงเป็น 0 ให้ลอยค้างอยู่กับที่
-            rb.linearVelocity = new Vector2(0f, isGrounded ? rb.linearVelocity.y : 0f);
+            if (!isShotgunKnockback)
+            {
+                rb.linearVelocity = new Vector2(0f, isGrounded ? rb.linearVelocity.y : 0f);
+            }
             rb.gravityScale = isGrounded ? defaultGravity : 0f;
             return;
         }
@@ -202,6 +218,7 @@ public class SplashX_PlayerMovement : MonoBehaviour
             rb.gravityScale = defaultGravity;
         }
     }
+
     void CheckGrounded()
     {
         wasGrounded = isGrounded;
@@ -213,13 +230,13 @@ public class SplashX_PlayerMovement : MonoBehaviour
 
             if (!wasGrounded)
             {
-                // บล็อคไม่ให้เล่นท่าลงพื้นตอนกำลังฟันดาบ
                 if (!isAttacking && (boneModel != null && boneModel.activeSelf))
                 {
                     if (isFastFalling)
                     {
                         if (boneAnim != null) boneAnim.SetTrigger("LandHeavy");
                         PlaySFX(heavyLandSFX);
+                        TriggerFastFallImpact();
                     }
                     else
                     {
@@ -228,6 +245,21 @@ public class SplashX_PlayerMovement : MonoBehaviour
                     }
                 }
                 isFastFalling = false;
+            }
+        }
+    }
+
+    void TriggerFastFallImpact()
+    {
+        if (heavyLandVFX != null && groundCheck != null) Instantiate(heavyLandVFX, groundCheck.position, Quaternion.identity);
+
+        if (groundCheck != null)
+        {
+            Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(groundCheck.position, fastFallHitRadius, enemyLayers);
+            foreach (Collider2D enemy in hitEnemies)
+            {
+                SplashX_Enemy enemyScript = enemy.GetComponent<SplashX_Enemy>();
+                if (enemyScript != null) enemyScript.TakeDamage(fastFallDamage);
             }
         }
     }
@@ -249,8 +281,6 @@ public class SplashX_PlayerMovement : MonoBehaviour
 
         boneAnim.SetBool("isGrounded", isGrounded);
         boneAnim.SetFloat("Speed", Mathf.Abs(rb.linearVelocity.x));
-
-        // 🔥 เติมบรรทัดนี้เข้าไป! เพื่อลิงก์เกราะป้องกันที่เราเพิ่งสร้าง
         boneAnim.SetBool("isDashing", isDashing);
 
         if (isDashing || isAttacking || isHurt)
@@ -263,87 +293,143 @@ public class SplashX_PlayerMovement : MonoBehaviour
         }
     }
 
-    private IEnumerator DashRoutine()
-    {
-        canDash = false;
-        isDashing = true;
-        isFastFalling = false;
-
-        if (boneAnim != null)
-        {
-            boneAnim.SetFloat("yVelocity", 0f);
-
-            boneAnim.SetTrigger("Dash");
-        }
-        PlaySFX(dashSFX);
-
-        float originalGravity = rb.gravityScale;
-        rb.gravityScale = 0f;
-        rb.linearVelocity = new Vector2((facingRight ? 1 : -1) * dashSpeed, 0f);
-
-        yield return new WaitForSeconds(dashDuration);
-
-        rb.gravityScale = originalGravity;
-        rb.linearVelocity = Vector2.zero;
-        isDashing = false;
-
-        yield return new WaitForSeconds(dashCooldown);
-        canDash = true;
-    }
-
-    private IEnumerator AttackRoutine(Vector2 hitBoxSize, int damage, float animDuration)
+    private IEnumerator ShotgunRoutine()
     {
         isAttacking = true;
+        isShotgunKnockback = true;
+        queuedAttack = QueuedAttack.None;
+
+        if (fbfAttackModel != null) fbfAttackModel.SetActive(false);
+        if (boneModel != null) boneModel.SetActive(true);
+
+        if (boneAnim != null) boneAnim.SetTrigger("Shotgun");
+        PlaySFX(shotgunSFX);
+
+        if (shotgunProjectilePrefab != null && attackPoint != null)
+        {
+            Instantiate(shotgunProjectilePrefab, attackPoint.position, attackPoint.rotation);
+        }
+
+        float recoilDir = facingRight ? -1f : 1f;
+        rb.linearVelocity = new Vector2(recoilDir * shotgunKnockbackForce, rb.linearVelocity.y);
+
+        yield return new WaitForSeconds(shotgunAnimTime);
+
+        isShotgunKnockback = false;
+        ResetAttackState();
+    }
+
+    private IEnumerator ComboAttackRoutine()
+    {
+        isAttacking = true;
+        comboStep = 1;
+        queuedAttack = QueuedAttack.None;
 
         if (boneModel != null) boneModel.SetActive(false);
         if (fbfAttackModel != null) fbfAttackModel.SetActive(true);
 
-        if (fbfAnim != null) fbfAnim.SetTrigger("Attack");
-        PlaySFX(attackSFX);
+        ExecuteHit1();
+        yield return new WaitForSeconds(hit1AnimTime);
+
+        if (queuedAttack == QueuedAttack.Normal)
+        {
+            comboStep = 2;
+            queuedAttack = QueuedAttack.None;
+
+            ExecuteHit2();
+            yield return new WaitForSeconds(hit2AnimTime);
+
+            if (queuedAttack == QueuedAttack.Normal)
+            {
+                comboStep = 3;
+                queuedAttack = QueuedAttack.None;
+
+                ExecuteHit3();
+                yield return new WaitForSeconds(hit3AnimTime);
+            }
+        }
+        else if (queuedAttack == QueuedAttack.Skill)
+        {
+            comboStep = 2;
+            queuedAttack = QueuedAttack.None;
+
+            ExecuteSkill1();
+            yield return new WaitForSeconds(skill1AnimTime);
+        }
+
+        ResetAttackState();
+    }
+
+    void ExecuteHit1()
+    {
+        if (fbfAnim != null) fbfAnim.SetTrigger("Attack1");
+        PlaySFX(hit1SFX);
+        ProcessBoxHit(hit1HitBox, hit1Damage);
+    }
+
+    void ExecuteHit2()
+    {
+        if (fbfAnim != null) fbfAnim.SetTrigger("Attack2");
+        PlaySFX(hit2SFX);
+        ProcessBoxHit(hit2HitBox, hit2Damage);
+    }
+
+    void ExecuteHit3()
+    {
+        if (fbfAnim != null) fbfAnim.SetTrigger("Attack3");
+        PlaySFX(hit3SFX);
+        if (hit3VFX != null && attackPoint != null) Instantiate(hit3VFX, attackPoint.position, Quaternion.identity);
 
         if (attackPoint != null)
         {
-            Collider2D[] hitEnemies = Physics2D.OverlapBoxAll(attackPoint.position, hitBoxSize, 0f, enemyLayers);
+            Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, hit3Radius, enemyLayers);
             foreach (Collider2D enemy in hitEnemies)
             {
                 SplashX_Enemy enemyScript = enemy.GetComponent<SplashX_Enemy>();
-                if (enemyScript != null) enemyScript.TakeDamage(damage);
+                if (enemyScript != null) enemyScript.TakeDamage(hit3Damage);
             }
         }
+    }
 
-        // ... โค้ดด้านบนของ AttackRoutine เหมือนเดิม ...
+    void ExecuteSkill1()
+    {
+        if (fbfAnim != null) fbfAnim.SetTrigger("Skill1");
+        PlaySFX(skill1SFX);
+        if (skill1VFX != null && attackPoint != null) Instantiate(skill1VFX, attackPoint.position, Quaternion.identity);
+        ProcessBoxHit(skill1HitBox, skill1Damage);
+    }
 
-        // ... โค้ดด้านบนของ AttackRoutine เหมือนเดิม ...
+    void ProcessBoxHit(Vector2 hitBoxSize, int damage)
+    {
+        if (attackPoint == null) return;
+        Collider2D[] hitEnemies = Physics2D.OverlapBoxAll(attackPoint.position, hitBoxSize, 0f, enemyLayers);
+        foreach (Collider2D enemy in hitEnemies)
+        {
+            SplashX_Enemy enemyScript = enemy.GetComponent<SplashX_Enemy>();
+            if (enemyScript != null) enemyScript.TakeDamage(damage);
+        }
+    }
 
-        yield return new WaitForSeconds(animDuration);
-
+    void ResetAttackState()
+    {
         if (fbfAttackModel != null) fbfAttackModel.SetActive(false);
         if (boneModel != null)
         {
             boneModel.SetActive(true);
-
             if (boneAnim != null)
             {
-                // 🔥 1. ยัดข้อมูลใส่สมองมันทันทีในเสี้ยววินาทีที่ตื่น! ตัดปัญหาตื่นมาเบลอ
                 boneAnim.SetBool("isGrounded", isGrounded);
                 boneAnim.SetFloat("yVelocity", 0f);
                 boneAnim.SetFloat("Speed", 0f);
-
-                // 🔥 2. ล้างคำสั่งตกค้างให้หมด
-                boneAnim.ResetTrigger("LandNormal");
-                boneAnim.ResetTrigger("LandHeavy");
                 boneAnim.ResetTrigger("Dash");
                 boneAnim.ResetTrigger("Jump");
-
-                // 🔥 3. บังคับยัดเข้าท่า Idle แบบฮาร์ดคอร์ (-1, 0f คือการบังคับเล่นเฟรมแรกทันที)
-                if (isGrounded)
-                {
-                    boneAnim.Play("Player_idle", -1, 0f);
-                }
+                if (isGrounded) boneAnim.Play("Player_idle", -1, 0f);
             }
         }
-
         isAttacking = false;
+        comboStep = 0;
+        queuedAttack = QueuedAttack.None;
+        isShotgunKnockback = false;
     }
 
     private void PlaySFX(AudioClip clip)
@@ -363,6 +449,34 @@ public class SplashX_PlayerMovement : MonoBehaviour
             facingRight = !facingRight;
             transform.Rotate(0f, 180f, 0f);
         }
+    }
+
+    // 🔥 กู้คืนฟังก์ชันที่โดนตัดทิ้งกลับมาให้หมด!
+    private IEnumerator DashRoutine()
+    {
+        canDash = false;
+        isDashing = true;
+        isFastFalling = false;
+
+        if (boneAnim != null)
+        {
+            boneAnim.SetFloat("yVelocity", 0f);
+            boneAnim.SetTrigger("Dash");
+        }
+        PlaySFX(dashSFX);
+
+        float originalGravity = rb.gravityScale;
+        rb.gravityScale = 0f;
+        rb.linearVelocity = new Vector2((facingRight ? 1 : -1) * dashSpeed, 0f);
+
+        yield return new WaitForSeconds(dashDuration);
+
+        rb.gravityScale = originalGravity;
+        rb.linearVelocity = Vector2.zero;
+        isDashing = false;
+
+        yield return new WaitForSeconds(dashCooldown);
+        canDash = true;
     }
 
     private void DropFromPlatform()
@@ -385,45 +499,40 @@ public class SplashX_PlayerMovement : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         Physics2D.IgnoreCollision(playerCollider, platformCollider, false);
     }
-    // ฟังก์ชันนี้จะถูกเรียกจากสคริปต์หลอดเลือด (SplashX_PlayerStats)
+
     public void TriggerHurt()
     {
-        // ไม้ตาย! สั่งหยุด Coroutine ทั้งหมด (หยุดท่าฟัน ท่าแดช ที่กำลังค้างอยู่ทันที)
-        StopAllCoroutines(); 
+        StopAllCoroutines();
         StartCoroutine(HurtRoutine());
     }
 
     private IEnumerator HurtRoutine()
     {
         isHurt = true;
-        
-        // คืนค่าสถานะต่างๆ ให้กลับเป็นปกติ ป้องกันบั๊กค้าง
+
         isAttacking = false;
         isDashing = false;
         canDash = true;
         isFastFalling = false;
+        comboStep = 0;
+        queuedAttack = QueuedAttack.None;
 
-        // บังคับสลับกลับมาร่างกระดูก (เผื่อโดนตีตอนกำลังวาดดาบ FbF อยู่)
         if (fbfAttackModel != null) fbfAttackModel.SetActive(false);
         if (boneModel != null) boneModel.SetActive(true);
 
-        // หยุดความเร็วแกน X ไม่ให้ไถล แต่ปล่อยแกน Y ไว้เผื่อโดนตีกลางอากาศจะได้ร่วงลงมา
         rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
 
-        // สั่งเล่นอนิเมชันชะงัก
         if (boneAnim != null)
         {
             boneAnim.ResetTrigger("Attack");
             boneAnim.ResetTrigger("Dash");
-            boneAnim.SetTrigger("Hurt"); // ⚠️ เดี๋ยวเราไปสร้างสวิตช์นี้ใน Animator ครับ
+            boneAnim.SetTrigger("Hurt");
         }
 
-        // รอจนกว่าจะหายชะงัก
         yield return new WaitForSeconds(hurtDuration);
 
         isHurt = false;
-        
-        // พอหายชะงัก ถ้าอยู่บนพื้นให้กลับไปยืนท่าปกติ
+
         if (isGrounded && boneAnim != null)
         {
             boneAnim.Play("Player_idle", -1, 0f);
@@ -436,11 +545,68 @@ public class SplashX_PlayerMovement : MonoBehaviour
         {
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawWireSphere(groundCheck.position, fastFallHitRadius);
         }
+
         if (attackPoint != null)
         {
             Gizmos.color = Color.green;
-            Gizmos.DrawWireCube(attackPoint.position, debugHitBoxSize);
+            Gizmos.DrawWireCube(attackPoint.position, hit1HitBox);
+
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireCube(attackPoint.position, hit2HitBox);
+
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(attackPoint.position, hit3Radius);
+
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireCube(attackPoint.position, skill1HitBox);
         }
+    }
+
+    // 🔥 ฟังก์ชันนี้เอาไว้ล้างสถานะที่ค้างอยู่ตอนตื่นจากการตาย
+    public void ResetAllStatesForRevive()
+    {
+        // 1. ล้างตัวแปรค้างคาทั้งหมด
+        isAttacking = false;
+        isDashing = false;
+        canDash = true;
+        isFastFalling = false;
+        isShotgunKnockback = false;
+        isHurt = false;
+        comboStep = 0;
+        queuedAttack = QueuedAttack.None;
+
+        // 2. บังคับสลับกลับมาร่างปกติ
+        if (fbfAttackModel != null) fbfAttackModel.SetActive(false);
+        if (boneModel != null) boneModel.SetActive(true);
+
+        // 3. รีเซ็ตคำสั่งแอนิเมชันของ "ร่างกระดูก" (อันนี้ไม่มี Attack)
+        if (boneAnim != null)
+        {
+            boneAnim.ResetTrigger("Death");
+            boneAnim.ResetTrigger("Dash");
+            boneAnim.ResetTrigger("Hurt");
+            boneAnim.ResetTrigger("Shotgun");
+            boneAnim.ResetTrigger("Jump");
+            boneAnim.ResetTrigger("LandNormal");
+            boneAnim.ResetTrigger("LandHeavy");
+
+            // บังคับยืนท่าปกติทันที
+            boneAnim.Play("Player_idle", -1, 0f);
+        }
+
+        // 🔥 4. รีเซ็ตคำสั่งแอนิเมชันของ "ร่างฟันดาบ" (แก้ Error ตรงนี้!)
+        if (fbfAnim != null)
+        {
+            fbfAnim.ResetTrigger("Attack1");
+            fbfAnim.ResetTrigger("Attack2");
+            fbfAnim.ResetTrigger("Attack3");
+            fbfAnim.ResetTrigger("Skill1"); // เผื่อตายตอนกดท่า J
+        }
+
+        // คืนค่าแรงโน้มถ่วงกลับเป็นปกติ
+        if (rb != null) rb.gravityScale = defaultGravity;
     }
 }
