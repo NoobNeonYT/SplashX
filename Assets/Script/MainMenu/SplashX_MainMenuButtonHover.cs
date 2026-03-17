@@ -1,11 +1,11 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class ButtonHover : MonoBehaviour
+public class SplashX_MainMenuButtonHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     public float scale = 1.1f;
 
-    Vector3 startScale;
+    private Vector3 startScale;
 
     void Start()
     {
@@ -15,10 +15,17 @@ public class ButtonHover : MonoBehaviour
     public void OnPointerEnter(PointerEventData eventData)
     {
         transform.localScale = startScale * scale;
+
+        UIAudioManager.instance.PlayHover();
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
         transform.localScale = startScale;
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        UIAudioManager.instance.PlayClick();
     }
 }
