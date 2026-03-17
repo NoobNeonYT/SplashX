@@ -54,7 +54,6 @@ public class SplashX_HealthPickup : MonoBehaviour
         }
     }
 
-    // ฟังก์ชันนี้เช็คตอนไอเทมหล่นกระแทกพื้น
     void OnCollisionEnter2D(Collision2D collision)
     {
         // เช็คว่าตกถึง "พื้น" หรือยัง (อะไรก็ได้ที่ไม่ใช่ผู้เล่น และต้องชนจากด้านล่าง)
