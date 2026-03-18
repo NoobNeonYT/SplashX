@@ -10,6 +10,10 @@ public class SplashX_PlayerMovement : MonoBehaviour
     [Header("Movement Settings")]
     public float moveSpeed = 8f;
 
+    [Header("Air Combo Settings")]
+    public float airHangTimeOnHit = 0.4f;
+    private float currentHitHangTimer = 0f;
+
     [Header("Anime Jump Physics")]
     public float jumpForce = 25f;
     public float upwardGravityMult = 4f;
@@ -79,17 +83,20 @@ public class SplashX_PlayerMovement : MonoBehaviour
     public float shotgunKnockbackForce = 5f;
     public float shotgunAnimTime = 0.5f;
     public AudioClip shotgunSFX;
+    public float shotgunCooldown = 2f; // 🔥 เพิ่มเวลา Cooldown (วินาที)
+    private float nextShotgunTime = 0f; // ตัวนับเวลาหลังฉาก
 
-    [Header("Skill Combo 1: Mid-Range (U -> J)")]
+    [Header("Skill Combo 1: Finisher (U -> U -> U -> J)")] // เปลี่ยนชื่อให้ตรงกับของใหม่
     public Vector2 skill1HitBox = new Vector2(4f, 1f);
     public int skill1Damage = 25;
     public float skill1AnimTime = 0.5f;
     public AudioClip skill1SFX;
     public GameObject skill1VFX;
+    public GameObject skill1ProjectilePrefab;
 
     private bool isAttacking = false;
     private bool isShotgunKnockback = false;
-    private int comboStep = 0;
+    
 
     [Header("Components & Effects")]
     public Animator anim;
@@ -133,8 +140,15 @@ public class SplashX_PlayerMovement : MonoBehaviour
         CheckGrounded();
         UpdateAnimatorParameters();
 
+        // บังคับส่งค่า isAttacking ให้ Animator เสมอ (ครอบเช็ค null ไว้กันบั๊กตอนสลับร่าง)
+        if (boneAnim != null && boneModel != null && boneModel.activeSelf)
+        {
+            boneAnim.SetBool("isAttacking", isAttacking);
+        }
+
         if (isHurt || isDashing) return;
 
+        // 🔥 ระบบคิวปุ่มกด และ เช็ค Cooldown ปืนลูกซอง
         if (Input.GetKeyDown(attackKey))
         {
             if (!isAttacking) StartCoroutine(ComboAttackRoutine());
@@ -142,8 +156,21 @@ public class SplashX_PlayerMovement : MonoBehaviour
         }
         else if (Input.GetKeyDown(skillKey))
         {
-            if (!isAttacking) StartCoroutine(ShotgunRoutine());
-            else queuedAttack = QueuedAttack.Skill;
+            // ถ้าไม่ได้ตีอยู่ = เป็นการกดยิงลูกซองเดี่ยวๆ
+            if (!isAttacking)
+            {
+                // เช็คว่าหมด Cooldown หรือยัง ถึงจะให้ยิงได้
+                if (Time.time >= nextShotgunTime)
+                {
+                    StartCoroutine(ShotgunRoutine());
+                    nextShotgunTime = Time.time + shotgunCooldown; // เริ่มจับเวลา Cooldown ใหม่
+                }
+            }
+            // ถ้ากำลังฟันดาบอยู่ = เป็นการกด J เพื่อจองคิวคอมโบ (U -> U -> U -> J)
+            else
+            {
+                queuedAttack = QueuedAttack.Skill;
+            }
         }
 
         if (!isAttacking)
@@ -183,40 +210,29 @@ public class SplashX_PlayerMovement : MonoBehaviour
         {
             if (!isShotgunKnockback)
             {
-                rb.linearVelocity = new Vector2(0f, isGrounded ? rb.linearVelocity.y : 0f);
+                // ตีโดน -> ล็อกตัวนิ่ง
+                if (currentHitHangTimer > 0 && !isGrounded)
+                {
+                    rb.linearVelocity = Vector2.zero;
+                    rb.gravityScale = 0f;
+                }
+                // ตีวืด -> ปล่อยร่วง (แต่ล็อกแกน X)
+                else
+                {
+                    rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
+                    rb.gravityScale = defaultGravity;
+                }
             }
-            rb.gravityScale = isGrounded ? defaultGravity : 0f;
+            else
+            {
+                // แรงถีบลูกซอง ปล่อยร่วงตามปกติ
+                rb.gravityScale = defaultGravity;
+            }
             return;
         }
 
-        if (!isGrounded)
-        {
-            if (isFastFalling)
-            {
-                rb.linearVelocity = new Vector2(moveInput * moveSpeed, -fastFallSpeed);
-                rb.gravityScale = 0f;
-            }
-            else if (Mathf.Abs(rb.linearVelocity.y) < hangTimeVelocityThreshold)
-            {
-                rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
-                rb.gravityScale = defaultGravity * hangTimeGravityMult;
-            }
-            else if (rb.linearVelocity.y < 0)
-            {
-                rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
-                rb.gravityScale = defaultGravity * downwardGravityMult;
-            }
-            else if (rb.linearVelocity.y > 0)
-            {
-                rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
-                rb.gravityScale = defaultGravity * upwardGravityMult;
-            }
-        }
-        else
-        {
-            rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
-            rb.gravityScale = defaultGravity;
-        }
+        // 🔥 เรียกใช้ฟิสิกส์ปกติเมื่อไม่ได้อยู่ในสถานะโจมตี
+        ApplyNormalPhysics();
     }
 
     void CheckGrounded()
@@ -279,11 +295,15 @@ public class SplashX_PlayerMovement : MonoBehaviour
     {
         if (boneAnim == null || (boneModel != null && !boneModel.activeSelf)) return;
 
-        boneAnim.SetBool("isGrounded", isGrounded);
-        boneAnim.SetFloat("Speed", Mathf.Abs(rb.linearVelocity.x));
-        boneAnim.SetBool("isDashing", isDashing);
+        bool isDead = (playerStats != null && playerStats.currentHp <= 0);
 
-        if (isDashing || isAttacking || isHurt)
+        boneAnim.SetBool("isGrounded", isDead ? true : isGrounded);
+        boneAnim.SetFloat("Speed", isDead ? 0f : Mathf.Abs(rb.linearVelocity.x));
+        boneAnim.SetBool("isAttacking", isAttacking);
+
+        // 🔥 อนิเมชันจะนิ่ง (yVelocity = 0) เฉพาะตอนที่ "ตีโดน" (Hang) เท่านั้น
+        // ถ้าตีวืด ปล่อยให้ค่า yVelocity ไหลตาม Rigidbody เพื่อให้แอนิเมชัน Fall ทำงาน
+        if (isDashing || isHurt || isDead || (isAttacking && currentHitHangTimer > 0))
         {
             boneAnim.SetFloat("yVelocity", 0f);
         }
@@ -322,7 +342,6 @@ public class SplashX_PlayerMovement : MonoBehaviour
     private IEnumerator ComboAttackRoutine()
     {
         isAttacking = true;
-        comboStep = 1;
         queuedAttack = QueuedAttack.None;
 
         if (boneModel != null) boneModel.SetActive(false);
@@ -333,7 +352,6 @@ public class SplashX_PlayerMovement : MonoBehaviour
 
         if (queuedAttack == QueuedAttack.Normal)
         {
-            comboStep = 2;
             queuedAttack = QueuedAttack.None;
 
             ExecuteHit2();
@@ -341,20 +359,19 @@ public class SplashX_PlayerMovement : MonoBehaviour
 
             if (queuedAttack == QueuedAttack.Normal)
             {
-                comboStep = 3;
                 queuedAttack = QueuedAttack.None;
 
                 ExecuteHit3();
                 yield return new WaitForSeconds(hit3AnimTime);
-            }
-        }
-        else if (queuedAttack == QueuedAttack.Skill)
-        {
-            comboStep = 2;
-            queuedAttack = QueuedAttack.None;
 
-            ExecuteSkill1();
-            yield return new WaitForSeconds(skill1AnimTime);
+                if (queuedAttack == QueuedAttack.Skill)
+                {
+                    queuedAttack = QueuedAttack.None;
+
+                    ExecuteSkill1();
+                    yield return new WaitForSeconds(skill1AnimTime);
+                }
+            }
         }
 
         ResetAttackState();
@@ -395,18 +412,44 @@ public class SplashX_PlayerMovement : MonoBehaviour
     {
         if (fbfAnim != null) fbfAnim.SetTrigger("Skill1");
         PlaySFX(skill1SFX);
-        if (skill1VFX != null && attackPoint != null) Instantiate(skill1VFX, attackPoint.position, Quaternion.identity);
-        ProcessBoxHit(skill1HitBox, skill1Damage);
+
+        // 1. สร้างองศาหักหัวลง 20 องศา
+        Quaternion downwardRotation = attackPoint.rotation * Quaternion.Euler(0f, 0f, -20f);
+
+        // 🔥 2. ยิง Prefab กระสุนคลื่นดาบออกไปตามองศาที่คำนวณไว้
+        if (skill1ProjectilePrefab != null && attackPoint != null)
+        {
+            Instantiate(skill1ProjectilePrefab, attackPoint.position, downwardRotation);
+        }
+
+        // (ถ้ามี Effect ฟันลมตอนง้างดาบ ก็ให้มันเล่นตรงตำแหน่งตัวละครปกติ)
+        if (skill1VFX != null && attackPoint != null)
+        {
+            Instantiate(skill1VFX, attackPoint.position, Quaternion.identity);
+        }
     }
 
     void ProcessBoxHit(Vector2 hitBoxSize, int damage)
     {
         if (attackPoint == null) return;
         Collider2D[] hitEnemies = Physics2D.OverlapBoxAll(attackPoint.position, hitBoxSize, 0f, enemyLayers);
+
+        bool hasHitTarget = false; // ตัวแปรเช็คผลลัพธ์การโจมตีเฟรมนี้
+
         foreach (Collider2D enemy in hitEnemies)
         {
             SplashX_Enemy enemyScript = enemy.GetComponent<SplashX_Enemy>();
-            if (enemyScript != null) enemyScript.TakeDamage(damage);
+            if (enemyScript != null)
+            {
+                enemyScript.TakeDamage(damage);
+                hasHitTarget = true; // ยืนยันว่าตีโดนศัตรู/บอส
+            }
+        }
+
+        // 🔥 ถ้าตีโดน และตัวอยู่กลางอากาศ -> สั่ง "หยุดเวลา" ให้ตัวละครค้างไว้
+        if (hasHitTarget && !isGrounded)
+        {
+            currentHitHangTimer = airHangTimeOnHit;
         }
     }
 
@@ -427,7 +470,6 @@ public class SplashX_PlayerMovement : MonoBehaviour
             }
         }
         isAttacking = false;
-        comboStep = 0;
         queuedAttack = QueuedAttack.None;
         isShotgunKnockback = false;
     }
@@ -508,19 +550,33 @@ public class SplashX_PlayerMovement : MonoBehaviour
 
     private IEnumerator HurtRoutine()
     {
-        isHurt = true;
-
         isAttacking = false;
         isDashing = false;
         canDash = true;
         isFastFalling = false;
-        comboStep = 0;
         queuedAttack = QueuedAttack.None;
+        isShotgunKnockback = false;
 
         if (fbfAttackModel != null) fbfAttackModel.SetActive(false);
         if (boneModel != null) boneModel.SetActive(true);
 
         rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
+
+        if (playerStats != null && playerStats.currentHp <= 0)
+        {
+            isHurt = false;
+
+            // 🔥 ย้ำอีกรอบก่อนที่สคริปต์จะโดนปิด! บังคับยัดค่า 0 ใส่หัว Animator ทันที
+            if (boneAnim != null)
+            {
+                boneAnim.SetFloat("yVelocity", 0f);
+                boneAnim.SetFloat("Speed", 0f);
+            }
+
+            yield break;
+        }
+
+        isHurt = true;
 
         if (boneAnim != null)
         {
@@ -565,7 +621,6 @@ public class SplashX_PlayerMovement : MonoBehaviour
         }
     }
 
-    // 🔥 ฟังก์ชันนี้เอาไว้ล้างสถานะที่ค้างอยู่ตอนตื่นจากการตาย
     public void ResetAllStatesForRevive()
     {
         // 1. ล้างตัวแปรค้างคาทั้งหมด
@@ -575,15 +630,23 @@ public class SplashX_PlayerMovement : MonoBehaviour
         isFastFalling = false;
         isShotgunKnockback = false;
         isHurt = false;
-        comboStep = 0;
         queuedAttack = QueuedAttack.None;
 
-        // 2. บังคับสลับกลับมาร่างปกติ
+        // 🔥 2. เคลียร์สมอง "ร่างฟันดาบ" (ทำก่อนที่จะปิดตัวมัน และทำเฉพาะตอนที่มันยังเปิดอยู่เท่านั้น!)
+        if (fbfAnim != null && fbfAttackModel != null && fbfAttackModel.activeSelf)
+        {
+            fbfAnim.ResetTrigger("Attack1");
+            fbfAnim.ResetTrigger("Attack2");
+            fbfAnim.ResetTrigger("Attack3");
+            fbfAnim.ResetTrigger("Skill1");
+        }
+
+        // 3. บังคับสลับกลับมาร่างปกติ
         if (fbfAttackModel != null) fbfAttackModel.SetActive(false);
         if (boneModel != null) boneModel.SetActive(true);
 
-        // 3. รีเซ็ตคำสั่งแอนิเมชันของ "ร่างกระดูก" (อันนี้ไม่มี Attack)
-        if (boneAnim != null)
+        // 🔥 4. เคลียร์สมอง "ร่างกระดูก" (ตอนนี้เปิดอยู่แน่นอน เพราะเพิ่งสั่ง SetActive(true) ไป)
+        if (boneAnim != null && boneModel != null && boneModel.activeSelf)
         {
             boneAnim.ResetTrigger("Death");
             boneAnim.ResetTrigger("Dash");
@@ -597,16 +660,40 @@ public class SplashX_PlayerMovement : MonoBehaviour
             boneAnim.Play("Player_idle", -1, 0f);
         }
 
-        // 🔥 4. รีเซ็ตคำสั่งแอนิเมชันของ "ร่างฟันดาบ" (แก้ Error ตรงนี้!)
-        if (fbfAnim != null)
-        {
-            fbfAnim.ResetTrigger("Attack1");
-            fbfAnim.ResetTrigger("Attack2");
-            fbfAnim.ResetTrigger("Attack3");
-            fbfAnim.ResetTrigger("Skill1"); // เผื่อตายตอนกดท่า J
-        }
-
         // คืนค่าแรงโน้มถ่วงกลับเป็นปกติ
         if (rb != null) rb.gravityScale = defaultGravity;
+    }
+
+    // 🔥 ฟังก์ชันฟิสิกส์การเดิน/กระโดด ปกติ (ยกยอดมาจาก FixedUpdate เดิม)
+    private void ApplyNormalPhysics()
+    {
+        if (!isGrounded)
+        {
+            if (isFastFalling)
+            {
+                rb.linearVelocity = new Vector2(moveInput * moveSpeed, -fastFallSpeed);
+                rb.gravityScale = 0f;
+            }
+            else if (Mathf.Abs(rb.linearVelocity.y) < hangTimeVelocityThreshold)
+            {
+                rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
+                rb.gravityScale = defaultGravity * hangTimeGravityMult;
+            }
+            else if (rb.linearVelocity.y < 0)
+            {
+                rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
+                rb.gravityScale = defaultGravity * downwardGravityMult;
+            }
+            else if (rb.linearVelocity.y > 0)
+            {
+                rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
+                rb.gravityScale = defaultGravity * upwardGravityMult;
+            }
+        }
+        else
+        {
+            rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
+            rb.gravityScale = defaultGravity;
+        }
     }
 }

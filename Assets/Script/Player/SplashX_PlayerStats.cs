@@ -52,12 +52,12 @@ public class SplashX_PlayerStats : MonoBehaviour
     // --- Health Logic ---
     public void TakeDamage(int damage)
     {
-        // ข้ามการทำดาเมจถ้าตายแล้ว หรือติดสถานะอมตะอยู่
         if (isDead || isInvincible) return;
 
         currentHp -= damage;
         Debug.Log("Player hit! Remaining HP: " + currentHp);
 
+        // ตัดสินใจว่าจะเล่นท่าเจ็บ หรือ ท่าตาย
         if (currentHp <= 0)
         {
             StartCoroutine(DeathRoutine());
@@ -74,63 +74,73 @@ public class SplashX_PlayerStats : MonoBehaviour
 
     public void Heal(int amount)
     {
-        if (isDead) return; // ตายแล้วฮีลไม่ขึ้น
+        if (isDead) return;
 
         currentHp += amount;
         if (currentHp > maxHp)
         {
-            currentHp = maxHp; // ล็อกไม่ให้เลือดล้นหลอด
+            currentHp = maxHp;
         }
 
         Debug.Log("Healed! Current HP: " + currentHp);
-
-        // 🌟 ถ้าอยากให้ตัวกระพริบสีเขียวตอนฮีล ก็เพิ่ม Coroutine คล้ายๆ ตอนโดนตีได้เลยครับ
     }
 
-    // 💀 ระบบตาย (แทนที่ฟังก์ชัน Die เดิม)
+    // 💀 ระบบตาย (เปิดร่างกระดูกก่อน แล้วบังคับกระชากเข้าท่า Death ทันที!)
     private IEnumerator DeathRoutine()
     {
         isDead = true;
-        Debug.Log("Player has fallen!");
 
-        // 1. ล็อกการควบคุมทั้งหมด
+        // 🔥 1. สลับร่างก่อนเป็นอย่างแรกสุด! ตามที่คุณเซฟบอกเลยครับ
+        if (movement != null)
+        {
+            if (movement.fbfAttackModel != null) movement.fbfAttackModel.SetActive(false);
+            if (movement.boneModel != null) movement.boneModel.SetActive(true);
+
+            // 🔥 2. พอร่างกระดูกเปิดปุ๊บ บังคับยัดข้อมูลหลอกสมองมันทันที!
+            if (movement.boneAnim != null)
+            {
+                // หลอกมันว่า "เหยียบพื้นแล้ว และไม่ได้ขยับ" (ปิดประตูท่า Fall 100%)
+                movement.boneAnim.SetBool("isGrounded", true);
+                movement.boneAnim.SetFloat("yVelocity", 0f);
+                movement.boneAnim.SetFloat("Speed", 0f);
+
+                // ล้างคำสั่งเจ็บ/ฟันดาบ ที่อาจจะค้างอยู่
+                movement.boneAnim.ResetTrigger("Hurt");
+
+                // 🔥 3. ไม้ตายขั้นสุด: เลิกใช้ Trigger แล้วใช้คำสั่ง Play บังคับเล่นท่าตายเดี๋ยวนั้นเลย!
+                // (คำเตือน: ในหน้าต่าง Animator กล่องท่าตายต้องชื่อ "Death" เป๊ะๆ นะครับ ถ้าชื่ออื่นให้แก้ตรงนี้ให้ตรงกัน)
+                movement.boneAnim.Play("Death", -1, 0f);
+            }
+        }
+
+        // 4. ล็อกการเดินและปิดฟิสิกส์ (ทำทีหลังสุด)
         if (movement != null)
         {
             movement.StopAllCoroutines();
             movement.enabled = false;
         }
 
-        // 2. หยุดความเร็วร่วงหล่น
-        if (rb != null) rb.linearVelocity = Vector2.zero;
-
-        // 3. สลับร่างและเล่นท่าตาย
-        if (movement != null)
+        if (rb != null)
         {
-            if (movement.fbfAttackModel != null) movement.fbfAttackModel.SetActive(false);
-            if (movement.boneModel != null) movement.boneModel.SetActive(true);
-
-            if (movement.boneAnim != null)
-            {
-                movement.boneAnim.SetTrigger("Death");
-            }
+            rb.linearVelocity = Vector2.zero;
+            rb.gravityScale = 0f;
         }
 
-        // 4. รอแอนิเมชันตายจบ (ปรับเวลาได้ตามความยาวท่าตาย)
+        // 5. รอแอนิเมชันตายจบ 
         yield return new WaitForSeconds(2f);
 
-        // 5. ส่งเรื่องให้ GameManager พาไปจุดเกิด หรือ รีเซ็ตด่าน
+        // 6. ส่งเรื่องให้ GameManager พาไปจุดเกิด
         if (SplashX_GameManager.instance != null)
         {
             SplashX_GameManager.instance.HandlePlayerDeath();
         }
         else
         {
-            // กันเหนียวกรณีไม่ได้วาง GameManager ไว้ในด่าน
             UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
         }
     }
 
-    // 🌟 ระบบชุบชีวิต (โดนเรียกใช้จาก GameManager)
+    // 🌟 ระบบชุบชีวิต
     public void Revive()
     {
         currentHp = maxHp;
@@ -142,10 +152,8 @@ public class SplashX_PlayerStats : MonoBehaviour
 
         if (movement != null)
         {
-            movement.enabled = true; // เปิดให้กลับมาทำงาน
-
-            // 🔥 เรียกฟังก์ชันล้างสมองตรงนี้! เพื่อแก้บั๊กตายแล้วค้าง
-            movement.ResetAllStatesForRevive();
+            movement.enabled = true;
+            movement.ResetAllStatesForRevive(); // ฟังก์ชันนี้จะจัดการล้างสมองและคืนค่าแรงโน้มถ่วงให้เอง
         }
     }
 

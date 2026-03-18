@@ -136,7 +136,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!95 &38846446
 Animator:
   serializedVersion: 7
@@ -213,7 +213,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 8.66, y: 12.99}
+  m_Size: {x: 12.7699995, y: 13.051826}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -227,7 +227,7 @@ Transform:
   m_GameObject: {fileID: 38846445}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.4386, y: 1.35, z: 0}
+  m_LocalPosition: {x: -0.06, y: -0.47, z: 0}
   m_LocalScale: {x: 0.34524, y: 0.34524, z: 0.34524}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7879,6 +7879,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SplashX_PlayerMovement
   moveSpeed: 8
+  airHangTimeOnHit: 0.4
   jumpForce: 16
   upwardGravityMult: 4
   downwardGravityMult: 3
@@ -7925,11 +7926,13 @@ MonoBehaviour:
   shotgunKnockbackForce: 5
   shotgunAnimTime: 0.5
   shotgunSFX: {fileID: 0}
+  shotgunCooldown: 2
   skill1HitBox: {x: 4, y: 1}
   skill1Damage: 25
   skill1AnimTime: 0.5
   skill1SFX: {fileID: 0}
   skill1VFX: {fileID: 0}
+  skill1ProjectilePrefab: {fileID: 8476664431954637600, guid: 889833ec7d049a442bfca739c4069b7d, type: 3}
   anim: {fileID: 1590010473}
   audioSource: {fileID: 0}
   jumpSFX: {fileID: 0}
@@ -9341,7 +9344,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2044103556288468966, guid: d7e4a284e086af9468b49c71be6b58e9, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2067291286702683814, guid: d7e4a284e086af9468b49c71be6b58e9, type: 3}
       propertyPath: m_Layer
