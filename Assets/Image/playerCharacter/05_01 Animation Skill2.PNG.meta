@@ -199,10 +199,10 @@ TextureImporter:
       name: 05_01 Animation Skill2_0
       rect:
         serializedVersion: 2
-        x: 472
-        y: 2537
-        width: 380
-        height: 629
+        x: 0
+        y: 2340
+        width: 1050
+        height: 1170
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -221,10 +221,10 @@ TextureImporter:
       name: 05_01 Animation Skill2_1
       rect:
         serializedVersion: 2
-        x: 1441
-        y: 2548
-        width: 460
-        height: 618
+        x: 1050
+        y: 2340
+        width: 1050
+        height: 1170
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -243,10 +243,10 @@ TextureImporter:
       name: 05_01 Animation Skill2_2
       rect:
         serializedVersion: 2
-        x: 2420
-        y: 2549
-        width: 455
-        height: 636
+        x: 2100
+        y: 2340
+        width: 1050
+        height: 1170
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -265,10 +265,10 @@ TextureImporter:
       name: 05_01 Animation Skill2_3
       rect:
         serializedVersion: 2
-        x: 1693
-        y: 2068
-        width: 5
-        height: 5
+        x: 0
+        y: 1170
+        width: 1050
+        height: 1170
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -287,10 +287,10 @@ TextureImporter:
       name: 05_01 Animation Skill2_4
       rect:
         serializedVersion: 2
-        x: 1700
-        y: 2066
-        width: 4
-        height: 5
+        x: 1050
+        y: 1170
+        width: 1050
+        height: 1170
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -309,10 +309,10 @@ TextureImporter:
       name: 05_01 Animation Skill2_5
       rect:
         serializedVersion: 2
-        x: 1705
-        y: 2064
-        width: 5
-        height: 5
+        x: 2100
+        y: 1170
+        width: 1050
+        height: 1170
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -331,10 +331,10 @@ TextureImporter:
       name: 05_01 Animation Skill2_6
       rect:
         serializedVersion: 2
-        x: 1164
-        y: 1382
-        width: 737
-        height: 674
+        x: 0
+        y: 0
+        width: 1050
+        height: 1170
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -345,204 +345,6 @@ TextureImporter:
       bones: []
       spriteID: 1d6dc606d5caab800800000000000000
       internalID: 629004615021287121
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 05_01 Animation Skill2_7
-      rect:
-        serializedVersion: 2
-        x: 1694
-        y: 2052
-        width: 14
-        height: 7
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: ebf810bb9c11c5944aa92011c0577dbe
-      internalID: 135815767
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 05_01 Animation Skill2_8
-      rect:
-        serializedVersion: 2
-        x: 290
-        y: 1376
-        width: 618
-        height: 634
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: c6112ce931f9b8945b7d290ef5671fa0
-      internalID: -1289329983
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 05_01 Animation Skill2_9
-      rect:
-        serializedVersion: 2
-        x: 2141
-        y: 1401
-        width: 833
-        height: 646
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 16b59ac70c24ce24e9afb7f2d564e253
-      internalID: -2085121994
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 05_01 Animation Skill2_10
-      rect:
-        serializedVersion: 2
-        x: 1675
-        y: 1375
-        width: 7
-        height: 9
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 15e02ebcb035a4d41abefea30f864e97
-      internalID: -1371881405
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 05_01 Animation Skill2_11
-      rect:
-        serializedVersion: 2
-        x: 1723
-        y: 1381
-        width: 6
-        height: 5
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: a1c8a73963c14da4eb209e946dc794a6
-      internalID: -1501226892
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 05_01 Animation Skill2_12
-      rect:
-        serializedVersion: 2
-        x: 1741
-        y: 1375
-        width: 5
-        height: 6
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 21109ec785036d04eba81e5997d6422c
-      internalID: 1714604125
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 05_01 Animation Skill2_13
-      rect:
-        serializedVersion: 2
-        x: 1684
-        y: 1376
-        width: 5
-        height: 4
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: bb32e24b369fbe54d89a9c4284f4956e
-      internalID: -1225318875
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 05_01 Animation Skill2_14
-      rect:
-        serializedVersion: 2
-        x: 1696
-        y: 1374
-        width: 5
-        height: 6
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: aa7b7a3eb3b296b4eaa0b45edca9c431
-      internalID: -80986462
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 05_01 Animation Skill2_15
-      rect:
-        serializedVersion: 2
-        x: 252
-        y: 249
-        width: 739
-        height: 769
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: c5502d4a7b5c3ca4fb029dd855835e0c
-      internalID: 1538694069
       vertices: []
       indices: 
       edges: []
@@ -561,24 +363,15 @@ TextureImporter:
     spriteCustomMetadata:
       entries:
       - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.0},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":7,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":3.0,"y":3.0},"gridSpriteSize":{"x":1050.0,"y":1170.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.0},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":7,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
       05_01 Animation Skill2_0: 8693472862133530320
       05_01 Animation Skill2_1: -3911396594936208845
-      05_01 Animation Skill2_10: -1371881405
-      05_01 Animation Skill2_11: -1501226892
-      05_01 Animation Skill2_12: 1714604125
-      05_01 Animation Skill2_13: -1225318875
-      05_01 Animation Skill2_14: -80986462
-      05_01 Animation Skill2_15: 1538694069
       05_01 Animation Skill2_2: 9088544194747404466
       05_01 Animation Skill2_3: 8809254032520830863
       05_01 Animation Skill2_4: -3480397989306822161
       05_01 Animation Skill2_5: -1741944525731226515
       05_01 Animation Skill2_6: 629004615021287121
-      05_01 Animation Skill2_7: 135815767
-      05_01 Animation Skill2_8: -1289329983
-      05_01 Animation Skill2_9: -2085121994
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

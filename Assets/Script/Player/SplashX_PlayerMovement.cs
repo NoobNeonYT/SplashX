@@ -96,7 +96,42 @@ public class SplashX_PlayerMovement : MonoBehaviour
 
     private bool isAttacking = false;
     private bool isShotgunKnockback = false;
-    
+
+    [Header("Skill: Heavy Smash (I)")]
+    public KeyCode smashKey = KeyCode.I;
+    public float smashStaminaCost = 100f;
+    public int smashDamage = 50;
+    public float smashRadius = 4f;
+    public float smashJumpForce = 15f;
+    public float smashForwardSpeed = 30f;
+    public float smashHangTime = 0.2f;
+    public float smashDownSpeed = 50f;
+    public float smashRecoverTime = 0.5f;
+    public AudioClip smashSFX;
+    public GameObject smashVFX;
+    private bool isHeavySmashing = false;
+
+    [Header("Ultimate: Star Burst (S + I)")]
+    public int ultimateChargeRequired = 500;
+    public int currentUltimateCharge = 0;
+    public GameObject ultimateReadyAura;
+    public float ultimateDashSpeed = 50f;
+    public float ultimateDashDuration = 0.5f;
+    public int starDamage = 7;
+    public float starDashOffset = 3f;
+    public float starDashSpeed = 40f;
+    public TrailRenderer dashTrail;
+
+    public AudioClip ultimateDashSFX;
+    public AudioClip starSlashSFX;
+    public GameObject ultimateSmashVFX;
+
+    public float ultDropHeight = 2f;       // ระยะกระโดดขึ้นไปบนหัวมอนก่อนทุ่ม
+    public float ultDropSpeed = 80f;       // ความเร็วดิ่งพสุธาตอนจบท่า
+    public int ultThrowDamage = 20;        // ดาเมจเป้าหมายที่โดนจับทุ่ม
+    public int ultAoeDamage = 50;          // ดาเมจคลื่นระเบิดรอบๆ
+    public float ultAoeRadius = 4f;        // รัศมีคลื่นระเบิด
+
 
     [Header("Components & Effects")]
     public Animator anim;
@@ -140,7 +175,8 @@ public class SplashX_PlayerMovement : MonoBehaviour
         CheckGrounded();
         UpdateAnimatorParameters();
 
-        // บังคับส่งค่า isAttacking ให้ Animator เสมอ (ครอบเช็ค null ไว้กันบั๊กตอนสลับร่าง)
+        if (currentHitHangTimer > 0) currentHitHangTimer -= Time.deltaTime;
+
         if (boneAnim != null && boneModel != null && boneModel.activeSelf)
         {
             boneAnim.SetBool("isAttacking", isAttacking);
@@ -148,25 +184,38 @@ public class SplashX_PlayerMovement : MonoBehaviour
 
         if (isHurt || isDashing) return;
 
-        // 🔥 ระบบคิวปุ่มกด และ เช็ค Cooldown ปืนลูกซอง
-        if (Input.GetKeyDown(attackKey))
+        // 🔥 คิวปุ่มกด: อัลติ (S+I), Smash (I), Normal (U), Shotgun (J)
+        if (Input.GetKey(downKey) && Input.GetKeyDown(smashKey))
+        {
+            // เช็คว่าไม่ได้ตีอยู่ และ "เกจดาเมจครบ 500 แล้ว"
+            if (!isAttacking && currentUltimateCharge >= ultimateChargeRequired)
+            {
+                StartCoroutine(UltimateStarRoutine());
+            }
+        }
+        else if (Input.GetKeyDown(smashKey))
+        {
+            if (!isAttacking && playerStats != null && playerStats.currentStamina >= smashStaminaCost)
+            {
+                playerStats.UseStamina(smashStaminaCost);
+                StartCoroutine(HeavySmashRoutine());
+            }
+        }
+        else if (Input.GetKeyDown(attackKey))
         {
             if (!isAttacking) StartCoroutine(ComboAttackRoutine());
             else queuedAttack = QueuedAttack.Normal;
         }
         else if (Input.GetKeyDown(skillKey))
         {
-            // ถ้าไม่ได้ตีอยู่ = เป็นการกดยิงลูกซองเดี่ยวๆ
             if (!isAttacking)
             {
-                // เช็คว่าหมด Cooldown หรือยัง ถึงจะให้ยิงได้
                 if (Time.time >= nextShotgunTime)
                 {
                     StartCoroutine(ShotgunRoutine());
-                    nextShotgunTime = Time.time + shotgunCooldown; // เริ่มจับเวลา Cooldown ใหม่
+                    nextShotgunTime = Time.time + shotgunCooldown;
                 }
             }
-            // ถ้ากำลังฟันดาบอยู่ = เป็นการกด J เพื่อจองคิวคอมโบ (U -> U -> U -> J)
             else
             {
                 queuedAttack = QueuedAttack.Skill;
@@ -208,30 +257,30 @@ public class SplashX_PlayerMovement : MonoBehaviour
 
         if (isAttacking)
         {
+            // 🔥 ถ้าเป็นท่า Smash ให้ "return" ออกไปเลย ปล่อยให้ Coroutine จัดการความเร็วเอง!
+            if (isHeavySmashing) return;
+
             if (!isShotgunKnockback)
             {
-                // ตีโดน -> ล็อกตัวนิ่ง
                 if (currentHitHangTimer > 0 && !isGrounded)
                 {
                     rb.linearVelocity = Vector2.zero;
                     rb.gravityScale = 0f;
                 }
-                // ตีวืด -> ปล่อยร่วง (แต่ล็อกแกน X)
                 else
                 {
+                    // อันนี้คือตัวการที่ล็อกแกน X ไว้สำหรับท่าโจมตีปกติ
                     rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
                     rb.gravityScale = defaultGravity;
                 }
             }
             else
             {
-                // แรงถีบลูกซอง ปล่อยร่วงตามปกติ
                 rb.gravityScale = defaultGravity;
             }
             return;
         }
 
-        // 🔥 เรียกใช้ฟิสิกส์ปกติเมื่อไม่ได้อยู่ในสถานะโจมตี
         ApplyNormalPhysics();
     }
 
@@ -299,6 +348,10 @@ public class SplashX_PlayerMovement : MonoBehaviour
 
         boneAnim.SetBool("isGrounded", isDead ? true : isGrounded);
         boneAnim.SetFloat("Speed", isDead ? 0f : Mathf.Abs(rb.linearVelocity.x));
+
+        // 🔥 กู้คืนบรรทัดนี้กลับมา! (ส่งสวิตช์ Dash ให้ Animator รับรู้)
+        boneAnim.SetBool("isDashing", isDashing);
+
         boneAnim.SetBool("isAttacking", isAttacking);
 
         // 🔥 อนิเมชันจะนิ่ง (yVelocity = 0) เฉพาะตอนที่ "ตีโดน" (Hang) เท่านั้น
@@ -377,6 +430,254 @@ public class SplashX_PlayerMovement : MonoBehaviour
         ResetAttackState();
     }
 
+    private IEnumerator UltimateStarRoutine()
+    {
+        isAttacking = true;
+        isHeavySmashing = true;
+        queuedAttack = QueuedAttack.None;
+        currentHitHangTimer = 0f;
+
+        // 🛡️ รีเซ็ตเกจและเปิดอมตะ
+        currentUltimateCharge = 0;
+        if (ultimateReadyAura != null) ultimateReadyAura.SetActive(false);
+        if (playerStats != null) playerStats.SetInvincible(true);
+
+        rb.linearVelocity = Vector2.zero;
+        rb.gravityScale = 0f;
+
+        // 🔥 สลับเป็นร่างเฟรมบายเฟรมทันทีที่กดใช้!
+        if (boneModel != null) boneModel.SetActive(false);
+        if (fbfAttackModel != null) fbfAttackModel.SetActive(true);
+
+        // 🌟 รันอนิเมชันพุ่ง (UltSkill)
+        if (fbfAnim != null) fbfAnim.SetTrigger("UltSkill");
+
+        // 🔊 เล่นเสียงท่าพุ่ง
+        PlaySFX(ultimateDashSFX);
+
+        // 🚀 พุ่งตรงไปข้างหน้าแบบความเร็วแสง
+        float dashTimer = 0f;
+        float dir = facingRight ? 1f : -1f;
+        rb.linearVelocity = new Vector2(dir * ultimateDashSpeed, 0f);
+
+        Collider2D target = null;
+
+        while (dashTimer < ultimateDashDuration)
+        {
+            dashTimer += Time.deltaTime;
+            Collider2D[] hits = Physics2D.OverlapBoxAll(attackPoint.position, hit1HitBox, 0f, enemyLayers);
+            if (hits.Length > 0)
+            {
+                target = hits[0];
+                break; // ชนปุ๊บ หยุดพุ่งปั๊บ
+            }
+            yield return null;
+        }
+
+        rb.linearVelocity = Vector2.zero; // เบรก
+
+        // 💥 ตัดสินผล: โดนเป้า หรือ วืด?
+        if (target != null)
+        {
+            SplashX_Enemy enemyScript = target.GetComponent<SplashX_Enemy>();
+            Rigidbody2D enemyRb = target.GetComponent<Rigidbody2D>();
+            bool isBoss = (enemyScript != null) && enemyScript.isBoss;
+
+            // รันอนิเมชันแปลงร่างเป็นดาว (PlayerStar)
+            if (fbfAnim != null) fbfAnim.SetTrigger("PlayerStar");
+
+            // ลุยคอมโบ 13 ดาบต่อเลย!
+            yield return StartCoroutine(StarDashSequence(enemyScript, enemyRb, target.transform, isBoss));
+        }
+        else
+        {
+            // ❌ พุ่งวืด: จบท่า
+            if (playerStats != null) playerStats.SetInvincible(false);
+            isHeavySmashing = false;
+            rb.gravityScale = defaultGravity;
+            ResetAttackState();
+        }
+    }
+
+    private IEnumerator StarDashSequence(SplashX_Enemy enemyScript, Rigidbody2D enemyRb, Transform targetTrans, bool isBoss)
+    {
+        if (dashTrail != null) dashTrail.emitting = true;
+
+        if (!isBoss && enemyRb != null)
+        {
+            enemyRb.linearVelocity = new Vector2(0f, 15f);
+            rb.linearVelocity = new Vector2(0f, 15f);
+            yield return new WaitForSeconds(0.3f);
+
+            enemyRb.linearVelocity = Vector2.zero;
+            enemyRb.gravityScale = 0f;
+            rb.linearVelocity = Vector2.zero;
+        }
+
+        // 🌟 ลุย 13 ดาบ! (ใช่ครับ 13 ทีเป๊ะๆ)
+        for (int i = 0; i < 13; i++)
+        {
+            if (enemyScript == null || enemyScript.currentHealth <= 0 || !enemyScript.gameObject.activeInHierarchy) break;
+
+            bool LtoR = Random.value > 0.5f;
+            Vector2 targetPos = targetTrans.position;
+            Vector2 startPos = targetPos + (LtoR ? Vector2.left : Vector2.right) * starDashOffset;
+            Vector2 endPos = targetPos + (LtoR ? Vector2.right : Vector2.left) * starDashOffset;
+
+            transform.position = startPos;
+            if ((LtoR && !facingRight) || (!LtoR && facingRight)) Flip();
+
+            float t = 0;
+            while (t < 1f)
+            {
+                t += Time.deltaTime * starDashSpeed;
+                transform.position = Vector2.Lerp(startPos, endPos, t);
+                yield return null;
+            }
+
+            enemyScript.TakeDamage(starDamage);
+            PlaySFX(starSlashSFX);
+
+            yield return new WaitForSeconds(0.05f);
+        }
+
+        if (dashTrail != null) dashTrail.emitting = false;
+
+        // 🔥 สลับกลับเป็นร่างคนกลางอากาศทันทีที่ครบ 13 ที!
+        if (fbfAttackModel != null) fbfAttackModel.SetActive(false);
+        if (boneModel != null)
+        {
+            boneModel.SetActive(true);
+            if (boneAnim != null)
+            {
+                boneAnim.SetBool("isGrounded", false);
+                boneAnim.SetFloat("yVelocity", -10f);
+            }
+        }
+
+        bool targetStillAlive = enemyScript != null && enemyScript.currentHealth > 0 && enemyScript.gameObject.activeInHierarchy;
+
+        // 🌟 ช็อตลงพื้น (Finisher)
+        if (!isBoss && targetStillAlive)
+        {
+            // เป้าหมายยังรอด -> กระโดดไปบนหัวแล้วทุ่มลงพื้น!
+            transform.position = targetTrans.position + Vector3.up * ultDropHeight; // ใช้ ultDropHeight
+
+            rb.linearVelocity = new Vector2(0f, -ultDropSpeed); // ใช้ ultDropSpeed
+            if (enemyRb != null) enemyRb.linearVelocity = new Vector2(0f, -ultDropSpeed);
+
+            while (!isGrounded) yield return null;
+
+            rb.linearVelocity = Vector2.zero;
+            enemyScript.TakeDamage(ultThrowDamage); // ดาเมจพิเศษโดนจับทุ่ม
+            if (enemyRb != null) enemyRb.gravityScale = 1f;
+        }
+        else
+        {
+            // เป้าหมายตาย หรือเป็นบอส -> ร่วงลงมากระแทกพื้นเปล่าๆ 
+            if (enemyRb != null && !isBoss) enemyRb.gravityScale = 1f;
+
+            rb.gravityScale = defaultGravity;
+            rb.linearVelocity = new Vector2(0f, -ultDropSpeed); // ใช้ ultDropSpeed
+
+            while (!isGrounded) yield return null;
+
+            rb.linearVelocity = Vector2.zero;
+        }
+
+        // 💥 ทันทีที่เท้าแตะพื้น 
+        if (boneAnim != null) boneAnim.SetTrigger("LandHeavy");
+        PlaySFX(heavyLandSFX);
+        PlaySFX(smashSFX);
+        if (ultimateSmashVFX != null && groundCheck != null) Instantiate(ultimateSmashVFX, groundCheck.position, Quaternion.identity);
+
+        // 💥 ระเบิดดาเมจ AOE รอบตัว! (ใช้ ultAoeRadius และ ultAoeDamage)
+        if (groundCheck != null)
+        {
+            Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(groundCheck.position, ultAoeRadius, enemyLayers);
+            foreach (Collider2D enemy in hitEnemies)
+            {
+                SplashX_Enemy hitEnemyScript = enemy.GetComponent<SplashX_Enemy>();
+                if (hitEnemyScript != null)
+                {
+                    hitEnemyScript.TakeDamage(ultAoeDamage);
+                }
+            }
+        }
+
+        // 🛡️ จบท่า
+        yield return new WaitForSeconds(0.5f);
+        if (playerStats != null) playerStats.SetInvincible(false);
+        isHeavySmashing = false;
+        ResetAttackState();
+    }
+
+    private IEnumerator HeavySmashRoutine()
+    {
+        isAttacking = true;
+        isHeavySmashing = true;
+        queuedAttack = QueuedAttack.None;
+        currentHitHangTimer = 0f;
+
+        if (boneModel != null) boneModel.SetActive(false);
+        if (fbfAttackModel != null) fbfAttackModel.SetActive(true);
+
+        if (fbfAnim != null) fbfAnim.SetTrigger("HeavySmash");
+
+        float dir = facingRight ? 1f : -1f;
+
+        // 1. ดีดตัวพุ่งไปข้างหน้า + ขึ้นฟ้า
+        rb.linearVelocity = new Vector2(dir * smashForwardSpeed, isGrounded ? smashJumpForce : smashJumpForce * 0.5f);
+
+        // 🔥 ปล่อยให้มันบินไปข้างหน้านานขึ้น (ปรับเลขตรงนี้ได้ ถ้าอยากให้พุ่งไกลอีกก็เพิ่มเป็น 0.4f)
+        yield return new WaitForSeconds(0.35f);
+
+        // 2. เบรกเอี๊ยดกลางอากาศเพื่อง้างดาบ
+        rb.linearVelocity = Vector2.zero;
+        rb.gravityScale = 0f;
+        yield return new WaitForSeconds(smashHangTime);
+
+        // 3. ทุบทะลวงลงพื้น! (ตอนทุบก็ให้มันพุ่งเฉียงไปข้างหน้าด้วย)
+        rb.gravityScale = defaultGravity;
+        rb.linearVelocity = new Vector2(dir * smashForwardSpeed, -smashDownSpeed);
+
+        while (!isGrounded)
+        {
+            yield return null;
+        }
+
+        // 4. เท้าแตะพื้น -> หยุดไถลและระเบิดดาเมจ
+        rb.linearVelocity = Vector2.zero;
+        PlaySFX(smashSFX);
+        ExecuteSmashHit();
+
+        yield return new WaitForSeconds(smashRecoverTime);
+
+        isHeavySmashing = false;
+        ResetAttackState();
+    }
+
+    void ExecuteSmashHit()
+    {
+        if (smashVFX != null && groundCheck != null)
+        {
+            Instantiate(smashVFX, groundCheck.position, Quaternion.identity);
+        }
+
+        if (groundCheck != null)
+        {
+            Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(groundCheck.position, smashRadius, enemyLayers);
+            foreach (Collider2D enemy in hitEnemies)
+            {
+                SplashX_Enemy enemyScript = enemy.GetComponent<SplashX_Enemy>();
+                if (enemyScript != null)
+                {
+                    enemyScript.TakeDamage(smashDamage);
+                    AddUltimateCharge(smashDamage); // 🔥 เติมเกจตรงนี้!
+                }
+            }
+        }
+    }
     void ExecuteHit1()
     {
         if (fbfAnim != null) fbfAnim.SetTrigger("Attack1");
@@ -400,11 +701,18 @@ public class SplashX_PlayerMovement : MonoBehaviour
         if (attackPoint != null)
         {
             Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, hit3Radius, enemyLayers);
+            bool hitSuccess = false;
             foreach (Collider2D enemy in hitEnemies)
             {
                 SplashX_Enemy enemyScript = enemy.GetComponent<SplashX_Enemy>();
-                if (enemyScript != null) enemyScript.TakeDamage(hit3Damage);
+                if (enemyScript != null)
+                {
+                    enemyScript.TakeDamage(hit3Damage);
+                    AddUltimateCharge(hit3Damage); // 🔥 เติมเกจตรงนี้!
+                    hitSuccess = true;
+                }
             }
+            if (hitSuccess && !isGrounded) currentHitHangTimer = airHangTimeOnHit;
         }
     }
 
@@ -434,7 +742,7 @@ public class SplashX_PlayerMovement : MonoBehaviour
         if (attackPoint == null) return;
         Collider2D[] hitEnemies = Physics2D.OverlapBoxAll(attackPoint.position, hitBoxSize, 0f, enemyLayers);
 
-        bool hasHitTarget = false; // ตัวแปรเช็คผลลัพธ์การโจมตีเฟรมนี้
+        bool hitSuccess = false;
 
         foreach (Collider2D enemy in hitEnemies)
         {
@@ -442,12 +750,12 @@ public class SplashX_PlayerMovement : MonoBehaviour
             if (enemyScript != null)
             {
                 enemyScript.TakeDamage(damage);
-                hasHitTarget = true; // ยืนยันว่าตีโดนศัตรู/บอส
+                AddUltimateCharge(damage); // 🔥 เติมเกจตรงนี้!
+                hitSuccess = true;
             }
         }
 
-        // 🔥 ถ้าตีโดน และตัวอยู่กลางอากาศ -> สั่ง "หยุดเวลา" ให้ตัวละครค้างไว้
-        if (hasHitTarget && !isGrounded)
+        if (hitSuccess && !isGrounded)
         {
             currentHitHangTimer = airHangTimeOnHit;
         }
@@ -472,6 +780,7 @@ public class SplashX_PlayerMovement : MonoBehaviour
         isAttacking = false;
         queuedAttack = QueuedAttack.None;
         isShotgunKnockback = false;
+        isHeavySmashing = false;
     }
 
     private void PlaySFX(AudioClip clip)
@@ -550,6 +859,7 @@ public class SplashX_PlayerMovement : MonoBehaviour
 
     private IEnumerator HurtRoutine()
     {
+        isHeavySmashing = false;
         isAttacking = false;
         isDashing = false;
         canDash = true;
@@ -601,8 +911,16 @@ public class SplashX_PlayerMovement : MonoBehaviour
         {
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
+
             Gizmos.color = Color.cyan;
             Gizmos.DrawWireSphere(groundCheck.position, fastFallHitRadius);
+
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawWireSphere(groundCheck.position, smashRadius);
+
+            // 🔥 วงกลมระเบิดของท่า Ultimate (สีส้ม)
+            Gizmos.color = new Color(1f, 0.5f, 0f);
+            Gizmos.DrawWireSphere(groundCheck.position, ultAoeRadius);
         }
 
         if (attackPoint != null)
@@ -624,6 +942,7 @@ public class SplashX_PlayerMovement : MonoBehaviour
     public void ResetAllStatesForRevive()
     {
         // 1. ล้างตัวแปรค้างคาทั้งหมด
+        isHeavySmashing = false;
         isAttacking = false;
         isDashing = false;
         canDash = true;
@@ -694,6 +1013,19 @@ public class SplashX_PlayerMovement : MonoBehaviour
         {
             rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
             rb.gravityScale = defaultGravity;
+        }
+    }
+
+    public void AddUltimateCharge(int damageDealt)
+    {
+        if (currentUltimateCharge >= ultimateChargeRequired) return;
+
+        currentUltimateCharge += damageDealt;
+
+        if (currentUltimateCharge >= ultimateChargeRequired)
+        {
+            currentUltimateCharge = ultimateChargeRequired;
+            if (ultimateReadyAura != null) ultimateReadyAura.SetActive(true);
         }
     }
 }

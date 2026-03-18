@@ -71,7 +71,10 @@ public class SplashX_PlayerStats : MonoBehaviour
             }
         }
     }
-
+    public void SetInvincible(bool state)
+    {
+        isInvincible = state;
+    }
     public void Heal(int amount)
     {
         if (isDead) return;
