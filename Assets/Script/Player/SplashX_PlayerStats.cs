@@ -54,6 +54,15 @@ public class SplashX_PlayerStats : MonoBehaviour
     {
         if (isDead || isInvincible) return;
 
+        // 🔥 แทรกระบบลดดาเมจตอนเปิดโหมดบ้าคลั่ง (Berserk)
+        SplashX_PerkSystem perkSystem = GetComponent<SplashX_PerkSystem>();
+        if (perkSystem != null && perkSystem.isBerserk)
+        {
+            // เอาดาเมจมาคูณเปอร์เซ็นต์ลดทอน แล้วปัดเศษเป็นจำนวนเต็ม
+            damage = Mathf.RoundToInt(damage * perkSystem.berserkDamageReduction);
+            Debug.Log("🛡️ โหมดบ้าคลั่งทำงาน! ลดดาเมจเหลือ: " + damage);
+        }
+
         currentHp -= damage;
         Debug.Log("Player hit! Remaining HP: " + currentHp);
 

@@ -175,7 +175,7 @@ public class SplashX_PlayerMovement : MonoBehaviour
         CheckGrounded();
         UpdateAnimatorParameters();
 
-        if (currentHitHangTimer > 0) currentHitHangTimer -= Time.deltaTime;
+        if (currentHitHangTimer > 0) currentHitHangTimer -= Time.unscaledDeltaTime;
 
         if (boneAnim != null && boneModel != null && boneModel.activeSelf)
         {
@@ -386,7 +386,7 @@ public class SplashX_PlayerMovement : MonoBehaviour
         float recoilDir = facingRight ? -1f : 1f;
         rb.linearVelocity = new Vector2(recoilDir * shotgunKnockbackForce, rb.linearVelocity.y);
 
-        yield return new WaitForSeconds(shotgunAnimTime);
+        yield return new WaitForSecondsRealtime(shotgunAnimTime); // 🔥 Realtime
 
         isShotgunKnockback = false;
         ResetAttackState();
@@ -401,32 +401,28 @@ public class SplashX_PlayerMovement : MonoBehaviour
         if (fbfAttackModel != null) fbfAttackModel.SetActive(true);
 
         ExecuteHit1();
-        yield return new WaitForSeconds(hit1AnimTime);
+        yield return new WaitForSecondsRealtime(hit1AnimTime); // 🔥 Realtime
 
         if (queuedAttack == QueuedAttack.Normal)
         {
             queuedAttack = QueuedAttack.None;
-
             ExecuteHit2();
-            yield return new WaitForSeconds(hit2AnimTime);
+            yield return new WaitForSecondsRealtime(hit2AnimTime); // 🔥 Realtime
 
             if (queuedAttack == QueuedAttack.Normal)
             {
                 queuedAttack = QueuedAttack.None;
-
                 ExecuteHit3();
-                yield return new WaitForSeconds(hit3AnimTime);
+                yield return new WaitForSecondsRealtime(hit3AnimTime); // 🔥 Realtime
 
                 if (queuedAttack == QueuedAttack.Skill)
                 {
                     queuedAttack = QueuedAttack.None;
-
                     ExecuteSkill1();
-                    yield return new WaitForSeconds(skill1AnimTime);
+                    yield return new WaitForSecondsRealtime(skill1AnimTime); // 🔥 Realtime
                 }
             }
         }
-
         ResetAttackState();
     }
 
@@ -626,18 +622,14 @@ public class SplashX_PlayerMovement : MonoBehaviour
 
         float dir = facingRight ? 1f : -1f;
 
-        // 1. ดีดตัวพุ่งไปข้างหน้า + ขึ้นฟ้า
         rb.linearVelocity = new Vector2(dir * smashForwardSpeed, isGrounded ? smashJumpForce : smashJumpForce * 0.5f);
 
-        // 🔥 ปล่อยให้มันบินไปข้างหน้านานขึ้น (ปรับเลขตรงนี้ได้ ถ้าอยากให้พุ่งไกลอีกก็เพิ่มเป็น 0.4f)
-        yield return new WaitForSeconds(0.35f);
+        yield return new WaitForSecondsRealtime(0.35f); // 🔥 Realtime
 
-        // 2. เบรกเอี๊ยดกลางอากาศเพื่อง้างดาบ
         rb.linearVelocity = Vector2.zero;
         rb.gravityScale = 0f;
-        yield return new WaitForSeconds(smashHangTime);
+        yield return new WaitForSecondsRealtime(smashHangTime); // 🔥 Realtime
 
-        // 3. ทุบทะลวงลงพื้น! (ตอนทุบก็ให้มันพุ่งเฉียงไปข้างหน้าด้วย)
         rb.gravityScale = defaultGravity;
         rb.linearVelocity = new Vector2(dir * smashForwardSpeed, -smashDownSpeed);
 
@@ -646,12 +638,11 @@ public class SplashX_PlayerMovement : MonoBehaviour
             yield return null;
         }
 
-        // 4. เท้าแตะพื้น -> หยุดไถลและระเบิดดาเมจ
         rb.linearVelocity = Vector2.zero;
         PlaySFX(smashSFX);
         ExecuteSmashHit();
 
-        yield return new WaitForSeconds(smashRecoverTime);
+        yield return new WaitForSecondsRealtime(smashRecoverTime); // 🔥 Realtime
 
         isHeavySmashing = false;
         ResetAttackState();
@@ -1027,5 +1018,23 @@ public class SplashX_PlayerMovement : MonoBehaviour
             currentUltimateCharge = ultimateChargeRequired;
             if (ultimateReadyAura != null) ultimateReadyAura.SetActive(true);
         }
+    }
+    // 🔥 ฟังก์ชันพิเศษสำหรับรับบัพเร่งเวลาจากสกิลฮะ ฮ่า ช้าชะมัด
+    public void ApplyTimeScaleMultiplier(float multiplier)
+    {
+        moveSpeed *= multiplier;
+        jumpForce *= multiplier;
+        dashSpeed *= multiplier;
+        fastFallSpeed *= multiplier;
+        shotgunKnockbackForce *= multiplier;
+        smashForwardSpeed *= multiplier;
+        smashDownSpeed *= multiplier;
+        ultimateDashSpeed *= multiplier;
+        starDashSpeed *= multiplier;
+
+        // ⚠️ แรงโน้มถ่วงต้องคูณยกกำลังสอง ตัวละครถึงจะตกถึงพื้นในเวลาเท่าเดิมเป๊ะๆ
+        float gravityMult = multiplier * multiplier;
+        defaultGravity *= gravityMult;
+        if (rb != null) rb.gravityScale = defaultGravity;
     }
 }

@@ -86,13 +86,25 @@ public class SplashX_Enemy : MonoBehaviour
     {
         Debug.Log("Enemy has been defeated!");
 
-        // 🎲 ทอยเต๋าสุ่มดรอปไอเทม! (เงื่อนไข: ต้องไม่ใช่บอส และต้องมีตัว Prefab ใส่ไว้)
+        // 🔥 1. ระบบแจกแต้ม Perk! (เฉพาะมอนสเตอร์ธรรมดา)
+        if (!isBoss)
+        {
+            // สุ่มแต้ม 10 ถึง 20 (ฟังก์ชัน Random.Range ของ int จะไม่รวมเลขตัวท้าย เลยต้องใส่ 21 ครับ)
+            int randomPerk = Random.Range(10, 21);
+
+            // หาตัว Player แล้วส่งแต้มไปให้
+            SplashX_PerkSystem perkSystem = FindFirstObjectByType<SplashX_PerkSystem>();
+            if (perkSystem != null)
+            {
+                perkSystem.AddPerkPoints(randomPerk);
+            }
+        }
+
+        // 🎲 2. ทอยเต๋าสุ่มดรอปไอเทมฮีล
         if (!isBoss && healthPickupPrefab != null)
         {
-            // Random.value จะสุ่มเลขตั้งแต่ 0.0 ถึง 1.0
-            if (Random.value <= dropChance) 
+            if (Random.value <= dropChance)
             {
-                // ถ้าสุ่มได้เลขน้อยกว่าหรือเท่ากับ 0.10 (โอกาส 10%) ให้เสกไอเทมตรงที่มอนสเตอร์ตาย
                 Instantiate(healthPickupPrefab, transform.position, Quaternion.identity);
             }
         }
