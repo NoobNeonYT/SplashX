@@ -23,7 +23,7 @@ public class SplashX_BossRoomIntro : MonoBehaviour
 
     IEnumerator IntroRoutine()
     {
-        // 1. สร้าง UI แผ่นฟิล์มสีดำมาบังฉาก (เขียนโค้ดสร้างให้ จะได้ไม่ต้องไปกาง Canvas เอง)
+        // 1. สร้าง UI แผ่นฟิล์มสีดำมาบังฉาก (โค้ดเดิม)
         GameObject canvasObj = new GameObject("DarkOverlayCanvas");
         Canvas canvas = canvasObj.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
@@ -39,24 +39,29 @@ public class SplashX_BossRoomIntro : MonoBehaviour
         rect.anchorMax = Vector2.one;
         rect.sizeDelta = Vector2.zero;
 
-        float elapsed = 0f;
-
-        // 2. เลื่อนดวงจันทร์ลงมา และค่อยๆ ปรับให้จอมืดลงไปพร้อมๆ กัน
-        while (smallMoon != null && smallMoonTarget != null && Vector2.Distance(smallMoon.position, smallMoonTarget.position) > 0.01f)
+        // 2. ลูปที่ 1: เลื่อนดวงจันทร์ลงมาให้ถึงจุดหมาย "ก่อน"
+        if (smallMoon != null && smallMoonTarget != null)
         {
-            smallMoon.position = Vector3.MoveTowards(smallMoon.position, smallMoonTarget.position, moonSpeed * Time.deltaTime);
-
-            if (elapsed < darkenDuration)
+            while (Vector2.Distance(smallMoon.position, smallMoonTarget.position) > 0.01f)
             {
-                float alpha = Mathf.Lerp(0f, targetDarkness, elapsed / darkenDuration);
-                darkImage.color = new Color(0, 0, 0, alpha);
-                elapsed += Time.deltaTime;
+                smallMoon.position = Vector3.MoveTowards(smallMoon.position, smallMoonTarget.position, moonSpeed * Time.deltaTime);
+                yield return null;
             }
+            // จับวางให้ตรงเป๊ะกันบัคขยับไม่สุด
+            smallMoon.position = smallMoonTarget.position;
+        }
 
+        // 3. ลูปที่ 2: พอดวงจันทร์ถึงเป้าหมายแล้ว... ค่อยเริ่มปรับให้จอมืดลง
+        float elapsed = 0f;
+        while (elapsed < darkenDuration)
+        {
+            float alpha = Mathf.Lerp(0f, targetDarkness, elapsed / darkenDuration);
+            darkImage.color = new Color(0, 0, 0, alpha);
+            elapsed += Time.deltaTime;
             yield return null;
         }
 
-        // ทำให้ชัวร์ว่ามืดถึงระดับที่ตั้งไว้เป๊ะๆ ตอนดวงจันทร์จอดสนิท
+        // ทำให้ชัวร์ว่ามืดถึงระดับที่ตั้งไว้เป๊ะๆ
         darkImage.color = new Color(0, 0, 0, targetDarkness);
     }
 }
