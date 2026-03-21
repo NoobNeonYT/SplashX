@@ -1040,7 +1040,7 @@ public class SplashX_PlayerMovement : MonoBehaviour
         if (audioSource == null || Walk == null) return;
 
         // เช็คเงื่อนไข: เดินอยู่บนพื้น + มีการกดปุ่มซ้ายขวา + ไม่ได้ตี/พุ่ง/เจ็บ/ตาย
-        bool isWalking = isGrounded && Mathf.Abs(moveInput) > 0 && !isAttacking && !isDashing && !isHurt && (playerStats != null && playerStats.currentHp > 0);
+        bool isWalking = isGrounded && Mathf.Abs(moveInput) > 0 && !isAttacking && !isDashing && !isHurt && (playerStats == null || playerStats.currentHp > 0);
 
         if (isWalking)
         {
