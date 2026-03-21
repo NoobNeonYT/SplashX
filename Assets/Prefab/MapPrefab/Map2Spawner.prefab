@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2413178625343272303
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5104470535609156171}
+  - component: {fileID: 1941448911656725123}
+  m_Layer: 0
+  m_Name: Map2Spawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5104470535609156171
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2413178625343272303}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 12.6, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1941448911656725123
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2413178625343272303}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7436204b1bafcfd4699355c8ffaea226, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SplashX_RoomSpawner
+  startRoom: {fileID: 5507858681147683050, guid: 612e07ad210570e4095cb3053371ec5e, type: 3}
+  middleRooms:
+  - {fileID: 7808869800852179910, guid: acc1ebb5627992a4891f95b3f6056f39, type: 3}
+  - {fileID: 9023337057803793422, guid: 35f7ea511d88e7244beca0009d989412, type: 3}
+  - {fileID: 7330639897377937326, guid: 80bef4c25c85af1449e6e0645c8dade6, type: 3}
+  - {fileID: 2753396823371600006, guid: 998911dee60971c49ad46f2ad359faca, type: 3}
+  - {fileID: 1741078532686453738, guid: 58cbda7b432515a45b253156276c0f0f, type: 3}
+  - {fileID: 762845787232021807, guid: f4b57563c06d1e34a98775798fc7bd74, type: 3}
+  - {fileID: 2914363714542028298, guid: 416ffc9b041aec245b34a2f5361ba67a, type: 3}
+  - {fileID: 4473767345656451437, guid: 7ee9ffa77e6dd774a87cad7d1c592318, type: 3}
+  - {fileID: 1864999176454168536, guid: 2a25a33b497765e40b43bad151b5aa6d, type: 3}
+  - {fileID: 998958153000223008, guid: f6caf0d0b33a891498e9af3be07fbecc, type: 3}
+  endRoom: {fileID: 2505048855280010434, guid: 7c6fbbdbb631e644bbf305791e9657e7, type: 3}
+  roomCount: 10
+  noRepeatCount: 3
