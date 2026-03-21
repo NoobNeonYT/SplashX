@@ -303,13 +303,13 @@ public class SplashX_PlayerMovement : MonoBehaviour
                     if (isFastFalling)
                     {
                         if (boneAnim != null) boneAnim.SetTrigger("LandHeavy");
-                        SFXManager.Instance.PlaySoundFXClip(heavyLandSFX, transform, 1f);
+                        SFXManager.Instance.PlaySoundFXClip(heavyLandSFX, transform, 0.7f);
                         TriggerFastFallImpact();
                     }
                     else
                     {
                         if (boneAnim != null) boneAnim.SetTrigger("LandNormal");
-                        SFXManager.Instance.PlaySoundFXClip(landSFX, transform, 1f);      
+                        SFXManager.Instance.PlaySoundFXClip(landSFX, transform, 0.7f);      
                     }
                 }
                 isFastFalling = false;
@@ -340,7 +340,7 @@ public class SplashX_PlayerMovement : MonoBehaviour
         isFastFalling = false;
 
         if (boneAnim != null) boneAnim.SetTrigger("Jump");
-        SFXManager.Instance.PlaySoundFXClip(jumpSFX, transform, 1f);
+        SFXManager.Instance.PlaySoundFXClip(jumpSFX, transform, 0.5f);
     }
 
     void UpdateAnimatorParameters()
@@ -379,7 +379,7 @@ public class SplashX_PlayerMovement : MonoBehaviour
         if (boneModel != null) boneModel.SetActive(true);
 
         if (boneAnim != null) boneAnim.SetTrigger("Shotgun");
-        SFXManager.Instance.PlaySoundFXClip(shotgunSFX, transform, 1f);
+        SFXManager.Instance.PlaySoundFXClip(shotgunSFX, transform, 0.1f);
 
         if (shotgunProjectilePrefab != null && attackPoint != null)
         {
@@ -535,7 +535,7 @@ public class SplashX_PlayerMovement : MonoBehaviour
             }
 
             enemyScript.TakeDamage(starDamage);
-            SFXManager.Instance.PlaySoundFXClip(starSlashSFX, transform, 1f);
+            SFXManager.Instance.PlaySoundFXClip(starSlashSFX, transform, 0.1f);
 
             yield return new WaitForSeconds(0.05f);
         }
@@ -587,7 +587,7 @@ public class SplashX_PlayerMovement : MonoBehaviour
         // 💥 ทันทีที่เท้าแตะพื้น 
         if (boneAnim != null) boneAnim.SetTrigger("LandHeavy");
         SFXManager.Instance.PlaySoundFXClip(heavyLandSFX, transform, 1f);
-        SFXManager.Instance.PlaySoundFXClip(smashSFX, transform, 1f);
+        SFXManager.Instance.PlaySoundFXClip(smashSFX, transform, 0.1f);
         if (ultimateSmashVFX != null && groundCheck != null) Instantiate(ultimateSmashVFX, groundCheck.position, Quaternion.identity);
 
         // 💥 ระเบิดดาเมจ AOE รอบตัว! (ใช้ ultAoeRadius และ ultAoeDamage)
@@ -642,7 +642,7 @@ public class SplashX_PlayerMovement : MonoBehaviour
         }
 
         rb.linearVelocity = Vector2.zero;
-        SFXManager.Instance.PlaySoundFXClip(smashSFX, transform, 1f);
+        SFXManager.Instance.PlaySoundFXClip(smashSFX, transform, 0.1f);
         ExecuteSmashHit();
 
         yield return new WaitForSecondsRealtime(smashRecoverTime); // 🔥 Realtime
@@ -675,21 +675,21 @@ public class SplashX_PlayerMovement : MonoBehaviour
     void ExecuteHit1()
     {
         if (fbfAnim != null) fbfAnim.SetTrigger("Attack1");
-        SFXManager.Instance.PlaySoundFXClip(hit1SFX, transform, 1f);
+        SFXManager.Instance.PlaySoundFXClip(hit1SFX, transform, 0.1f);
         ProcessBoxHit(hit1HitBox, hit1Damage);
     }
 
     void ExecuteHit2()
     {
         if (fbfAnim != null) fbfAnim.SetTrigger("Attack2");
-        SFXManager.Instance.PlaySoundFXClip(hit2SFX, transform, 1f);
+        SFXManager.Instance.PlaySoundFXClip(hit2SFX, transform, 0.1f);
         ProcessBoxHit(hit2HitBox, hit2Damage);
     }
 
     void ExecuteHit3()
     {
         if (fbfAnim != null) fbfAnim.SetTrigger("Attack3");
-        SFXManager.Instance.PlaySoundFXClip(hit3SFX, transform, 1f);
+        SFXManager.Instance.PlaySoundFXClip(hit3SFX, transform, 0.1f);
         if (hit3VFX != null && attackPoint != null) Instantiate(hit3VFX, attackPoint.position, Quaternion.identity);
 
         if (attackPoint != null)
@@ -713,7 +713,7 @@ public class SplashX_PlayerMovement : MonoBehaviour
     void ExecuteSkill1()
     {
         if (fbfAnim != null) fbfAnim.SetTrigger("Skill1");
-        SFXManager.Instance.PlaySoundFXClip(skill1SFX, transform, 1f);
+        SFXManager.Instance.PlaySoundFXClip(skill1SFX, transform, 0.1f);
 
         // 1. สร้างองศาหักหัวลง 20 องศา
         Quaternion downwardRotation = attackPoint.rotation * Quaternion.Euler(0f, 0f, -20f);
@@ -803,7 +803,7 @@ public class SplashX_PlayerMovement : MonoBehaviour
             boneAnim.SetFloat("yVelocity", 0f);
             boneAnim.SetTrigger("Dash");
         }
-        SFXManager.Instance.PlaySoundFXClip(dashSFX, transform, 1f);
+        SFXManager.Instance.PlaySoundFXClip(dashSFX, transform, 0.7f);
 
         float originalGravity = rb.gravityScale;
         rb.gravityScale = 0f;
@@ -1035,57 +1035,23 @@ public class SplashX_PlayerMovement : MonoBehaviour
         defaultGravity *= gravityMult;
         if (rb != null) rb.gravityScale = defaultGravity;
     }
-    private void HandleWalkSound()
+    public float stepInterval = 0.4f;
+    private float stepTimer;
+    void HandleWalkSound()
     {
-        if (audioSource == null || Walk == null) return;
-
-        // เช็คเงื่อนไข: เดินอยู่บนพื้น + มีการกดปุ่มซ้ายขวา + ไม่ได้ตี/พุ่ง/เจ็บ/ตาย
-        bool isWalking = isGrounded && Mathf.Abs(moveInput) > 0 && !isAttacking && !isDashing && !isHurt && (playerStats == null || playerStats.currentHp > 0);
-
-        if (isWalking)
+        if (isGrounded && Mathf.Abs(moveInput) > 0.1f && !isAttacking && !isDashing)
         {
-            // ถ้ายังไม่ได้เล่นเสียงเดิน ให้เล่นและเปิด Loop
-            if (!audioSource.isPlaying || audioSource.clip != Walk)
+            stepTimer -= Time.deltaTime;
+
+            if (stepTimer <= 0f)
             {
-                audioSource.clip = Walk;
-                audioSource.loop = true;
-                audioSource.Play();
+                SFXManager.Instance.PlaySoundFXClip(Walk, transform, 10f);
+                stepTimer = stepInterval;
             }
         }
         else
         {
-            // ถ้าหยุดเดิน หรือกระโดดลอยฟ้า ให้หยุดเสียงทันที
-            if (audioSource.clip == Walk && audioSource.isPlaying)
-            {
-                audioSource.Stop();
-                audioSource.loop = false;
-            }
+            stepTimer = 0f;
         }
     }
-    //private void HandleWalkSound()
-    //{
-    //    if (audioSource == null || Walk == null) return;
-
-    //    bool isWalking = isGrounded && (Mathf.Abs(moveInput) > 0.1f);
-
-    //    if (isWalking)
-    //    {
-    //        Debug.Log("แตะพื้นและกำลังเดิน! เสียงต้องดังแล้ว!"); 
-
-    //        if (!audioSource.isPlaying || audioSource.clip != Walk)
-    //        {
-    //            audioSource.clip = Walk;
-    //            audioSource.loop = true;
-    //            audioSource.Play();
-    //        }
-    //    }
-    //    else
-    //    {
-    //        if (audioSource.clip == Walk && audioSource.isPlaying)
-    //        {
-    //            audioSource.Stop();
-    //            audioSource.loop = false;
-    //        }
-    //    }
-    //}
 }
