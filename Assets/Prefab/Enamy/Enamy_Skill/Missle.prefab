@@ -83,7 +83,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 140
   m_MaskInteraction: 0
   m_Sprite: {fileID: -1483665779731714255, guid: 5a33a38486c44484d81ae7432eb7376f, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -180,11 +180,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d0d1767f871c154f87c519bf7c706b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SplashX_HomingMissile
-  speed: 8
+  freeFlightDuration: 0.5
+  upwardForce: 8
+  forwardForce: 3
+  homingSpeed: 10
   rotateSpeed: 200
+  angleOffset: 90
+  targetOffsetY: 1
   damage: 15
   lifeTime: 5
-  angleOffset: 90
   explosionVFX: {fileID: 0}
   explosionSound: {fileID: 0}
   groundLayer:
