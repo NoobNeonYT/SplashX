@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SplashX_KuanTeenBomberManager
   bomberPrefab: {fileID: 8004660114553824790, guid: f28cf104df56e5a4b86a8d8e1546e5ef, type: 3}
-  minSpawnTime: 60
+  minSpawnTime: 45
   maxSpawnTime: 150
   offScreenDistanceX: 30
   offScreenHeightY: 15
