@@ -89,10 +89,7 @@ public class SplashX_Enemy : MonoBehaviour
         // 🔥 1. ระบบแจกแต้ม Perk! (เฉพาะมอนสเตอร์ธรรมดา)
         if (!isBoss)
         {
-            // สุ่มแต้ม 10 ถึง 20 (ฟังก์ชัน Random.Range ของ int จะไม่รวมเลขตัวท้าย เลยต้องใส่ 21 ครับ)
             int randomPerk = Random.Range(10, 21);
-
-            // หาตัว Player แล้วส่งแต้มไปให้
             SplashX_PerkSystem perkSystem = FindFirstObjectByType<SplashX_PerkSystem>();
             if (perkSystem != null)
             {
@@ -109,6 +106,39 @@ public class SplashX_Enemy : MonoBehaviour
             }
         }
 
+        // 🔥 3. แทนที่จะ Destroy ทันที ให้เรียก Coroutine หน่วงเวลาแทน
+        StartCoroutine(DestroyAfterDeathAnim());
+    }
+
+    // ระบบจัดการศพหลังตาย
+    private IEnumerator DestroyAfterDeathAnim()
+    {
+        // 1. ปิดกล่องชนทันที
+        Collider2D col = GetComponent<Collider2D>();
+        if (col != null) col.enabled = false;
+
+        // 2. ปิดฟิสิกส์ไม่ให้ไหลตกแมพ
+        Rigidbody2D rb = GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector2.zero;
+            rb.bodyType = RigidbodyType2D.Kinematic;
+        }
+
+        // 3. ปิดสคริปต์ AI ทุกตัว (Animator รอดอยู่แล้วเพราะมันไม่ใช่ MonoBehaviour)
+        MonoBehaviour[] scripts = GetComponents<MonoBehaviour>();
+        foreach (MonoBehaviour script in scripts)
+        {
+            if (script != this) // ปิดทุกสคริปต์ที่ไม่ใช่สคริปต์นี้
+            {
+                script.enabled = false;
+            }
+        }
+
+        // 4. รอเวลาให้เล่นแอนิเมชันตายจนจบ (ปรับตัวเลขตามชอบ)
+        yield return new WaitForSeconds(2f);
+
+        // 5. ลบศพทิ้งออกจากฉาก
         Destroy(gameObject);
     }
 }
