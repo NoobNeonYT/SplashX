@@ -1320,6 +1320,7 @@ MonoBehaviour:
   maxHealth: 100
   currentHealth: 0
   isBoss: 0
+  isBossDontDestroy: 0
   hitSparkPrefab: {fileID: 0}
   stunDuration: 0.2
   isStunned: 0
@@ -1349,7 +1350,7 @@ MonoBehaviour:
     m_Bits: 64
   firePoint: {fileID: 1124873697077281735}
   chargeVFX: {fileID: 0}
-  laserLine: {fileID: 0}
+  laserLine: {fileID: 867049950326005457, guid: eef93348d0f0f3c4f82ef790f86c9814, type: 3}
   hitVFX: {fileID: 0}
   laserDamage: 20
   laserDistance: 20
