@@ -2,30 +2,34 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Unity.Cinemachine;
 
 public class SplashX_BossIntro : MonoBehaviour
 {
     [Header("Cinematic Objects")]
     public Transform bigMoon;
     public Transform bigMoonTarget;
-    // ลบ Small Moon ออกไปแล้ว!
 
-    [Header("Camera Control")]
-    public float shakeDuration = 4f;
-    public float shakeMagnitude = 0.3f;
-    public float zoomOutSize = 8f;
-    public float normalZoomSize = 5f;
-    public Transform lockedCameraTarget;
+    [Header("Cameras & Control")]
+    public SplashX_CameraControl playerCamScript;
+    public CinemachineCamera cinematicVcam; // กล้องเป้าหมายที่ตั้งค่าซูมและตำแหน่งไว้แล้ว
 
-    [Header("Optional: ปิดกล้องตามผู้เล่น")]
-    [Tooltip("ลากสคริปต์ที่คุมกล้องของคุณมาใส่ตรงนี้ (ถ้ามี) เพื่อปิดมันชั่วคราวให้กล้องสั่นได้เต็มที่")]
-    public MonoBehaviour cameraFollowScript;
+    [Header("Shake Settings")]
+    public float shakeDuration = 5f;
+    public float shakeAmplitude = 3f;
 
     [Header("Timing Settings")]
     public float bigMoonSpeed = 3f;
     public string bossSceneName = "BossRoom_Phase1";
 
     private bool isTriggered = false;
+    private CinemachineBasicMultiChannelPerlin playerNoise;
+
+    void Start()
+    {
+        // เริ่มเกมมา ปิดกล้องคัตซีนไว้ก่อน
+        if (cinematicVcam != null) cinematicVcam.gameObject.SetActive(false);
+    }
 
     void OnTriggerEnter2D(Collider2D col)
     {
@@ -38,51 +42,36 @@ public class SplashX_BossIntro : MonoBehaviour
 
     IEnumerator PlayIntroCinematic()
     {
-        Camera mainCam = Camera.main;
-
-        // 🔥 บังคับปิดสคริปต์กล้องตามผู้เล่น (ถ้าลากมาใส่ไว้) กล้องจะได้ไม่โดนดึงกลับไปหาเคียวตอนกำลังสั่น
-        if (cameraFollowScript != null) cameraFollowScript.enabled = false;
-
-        Vector3 originalCamPos = mainCam.transform.position;
-        float originalSize = mainCam.orthographicSize;
-
-        // --- 1. กล้องสั่น 4 วินาที ---
-        float elapsed = 0.0f;
-        while (elapsed < shakeDuration)
+        if (playerCamScript != null && playerCamScript.vcam != null)
         {
-            float x = Random.Range(-1f, 1f) * shakeMagnitude;
-            float y = Random.Range(-1f, 1f) * shakeMagnitude;
-            mainCam.transform.position = new Vector3(originalCamPos.x + x, originalCamPos.y + y, originalCamPos.z);
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
-        // คืนตำแหน่งเดิมก่อนซูม
-        mainCam.transform.position = originalCamPos;
-
-        // --- 2. Zoom out ดูความใหญ่ของดวงจันทร์ ---
-        elapsed = 0f;
-        while (elapsed < 1.5f)
-        {
-            mainCam.orthographicSize = Mathf.Lerp(originalSize, zoomOutSize, elapsed / 1.5f);
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
-        yield return new WaitForSeconds(1.5f);
-
-        // --- 3. Zoom กลับไปที่เป้าหมายที่ล็อคไว้ (ขยับกล้องไปดูดวงจันทร์เต็มๆ) ---
-        elapsed = 0f;
-        Vector3 lockPos = lockedCameraTarget != null ? lockedCameraTarget.position : originalCamPos;
-        lockPos.z = originalCamPos.z;
-
-        while (elapsed < 1.5f)
-        {
-            mainCam.orthographicSize = Mathf.Lerp(zoomOutSize, normalZoomSize, elapsed / 1.5f);
-            mainCam.transform.position = Vector3.Lerp(originalCamPos, lockPos, elapsed / 1.5f);
-            elapsed += Time.deltaTime;
-            yield return null;
+            playerNoise = playerCamScript.vcam.GetComponent<CinemachineBasicMultiChannelPerlin>();
         }
 
-        // --- 4. Big Moon ลอยขึ้นไปแล้วทำลายทิ้ง ---
+        // ล็อกไม่ให้สคริปต์ผู้เล่นมาแย่งซูม
+        if (playerCamScript != null) playerCamScript.isLockedZ = true;
+
+        // --- 1. สั่นกล้องผู้เล่น 5 วินาที ---
+        if (playerNoise != null)
+        {
+            playerNoise.AmplitudeGain = shakeAmplitude;
+            yield return new WaitForSeconds(shakeDuration);
+            playerNoise.AmplitudeGain = 0f;
+        }
+
+        // --- 2. ตัดสลับไปกล้องคัตซีน ---
+        // ปิดสคริปต์คุมกล้องเดิมของผู้เล่นทิ้งไปเลย
+        if (playerCamScript != null) playerCamScript.enabled = false;
+
+        if (cinematicVcam != null)
+        {
+            // 🔥 แค่สั่งเปิดกล้องคัตซีน Cinemachine จะทำการแพนและซูมภาพไปหากล้องคัตซีนให้เองแบบสมูทสุดๆ!
+            cinematicVcam.gameObject.SetActive(true);
+
+            // ให้เวลา Cinemachine เบลนด์ภาพไปหากล้องคัตซีน (ปกติใช้เวลา 2 วินาที)
+            yield return new WaitForSeconds(2.5f);
+        }
+
+        // --- 3. ดวงจันทร์ใหญ่ลอยขึ้นไปแล้ว "หยุด" ---
         if (bigMoon != null && bigMoonTarget != null)
         {
             while (Vector2.Distance(bigMoon.position, bigMoonTarget.position) > 0.1f)
@@ -90,16 +79,16 @@ public class SplashX_BossIntro : MonoBehaviour
                 bigMoon.position = Vector3.MoveTowards(bigMoon.position, bigMoonTarget.position, bigMoonSpeed * Time.deltaTime);
                 yield return null;
             }
-            Destroy(bigMoon.gameObject);
         }
 
-        // --- 5. Fade เข้า Scene ห้องบอสอัตโนมัติ ---
+        yield return new WaitForSeconds(1.5f);
+
+        // --- 4. Fade เข้า Scene ห้องบอส ---
         yield return StartCoroutine(FadeAndLoad());
     }
 
     IEnumerator FadeAndLoad()
     {
-        // สร้าง UI จอดำด้วยโค้ด ล้วนๆ
         GameObject canvasObj = new GameObject("FadeCanvas");
         Canvas canvas = canvasObj.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
@@ -115,8 +104,7 @@ public class SplashX_BossIntro : MonoBehaviour
         rect.anchorMax = Vector2.one;
         rect.sizeDelta = Vector2.zero;
 
-        // ค่อยๆ มืดลง 1 วินาที
-        float fadeDuration = 1f;
+        float fadeDuration = 1.5f;
         float elapsed = 0f;
         while (elapsed < fadeDuration)
         {
@@ -127,7 +115,6 @@ public class SplashX_BossIntro : MonoBehaviour
         }
         fadeImage.color = Color.black;
 
-        // ย้ายฉาก!
         SceneManager.LoadScene(bossSceneName);
     }
 }
