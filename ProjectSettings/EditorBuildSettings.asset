@@ -8,12 +8,24 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Prefab/Scenes/MainMenu.unity
     guid: 4fdd87e3070427e4c9bd4b10d1e1907c
-  - enabled: 1
+  - enabled: 0
     path: Assets/Prefab/Scenes/all_system_here/all_system_here.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
-  - enabled: 1
+  - enabled: 0
     path: Assets/Prefab/Scenes/all_system_here/all_system_hereBoss001.unity
     guid: 9ccadafd72d61b442b02edee14bf569c
+  - enabled: 1
+    path: Assets/001_TheGame/Scenes/Final_Boss_Phase_0.unity
+    guid: 7e9d7d6470fd09b4f8d3c53efc5ac39e
+  - enabled: 1
+    path: Assets/001_TheGame/Scenes/Final_Boss_Phase_1.unity
+    guid: 950c65279c9d7d343991d94ad8a5073b
+  - enabled: 1
+    path: Assets/001_TheGame/Scenes/Final_Boss_Phase_2.unity
+    guid: 672cb3c18ba90f347bd6c2a0212638cb
+  - enabled: 1
+    path: Assets/001_TheGame/Scenes/Background2_Boss.unity
+    guid: 63d2ec64ddc2d7346bf68dce1ac667f5
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

@@ -1316,7 +1316,7 @@ MonoBehaviour:
   shakeDuration: 1.5
   shakeAmplitude: 3
   bigMoonSpeed: 6
-  bossSceneName: BossRoom_Phase1
+  bossSceneName: Final_Boss_Phase_1
 --- !u!61 &729012344
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1893,6 +1893,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SplashX_PlayerMovement
   moveSpeed: 8
+  Walk: {fileID: 0}
   airHangTimeOnHit: 0.4
   jumpForce: 16
   upwardGravityMult: 4
@@ -3753,7 +3754,6 @@ SceneRoots:
   - {fileID: 458767669}
   - {fileID: 477936553}
   - {fileID: 77085152}
-  - {fileID: 729012342}
   - {fileID: 1630747265}
   - {fileID: 1877561135}
   - {fileID: 1540412409}
@@ -3761,3 +3761,4 @@ SceneRoots:
   - {fileID: 1988160434}
   - {fileID: 1385679466}
   - {fileID: 940502953}
+  - {fileID: 729012342}

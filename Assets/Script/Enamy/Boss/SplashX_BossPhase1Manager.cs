@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI; // 🔥 ตัวนี้แหละที่แก้ Error คำว่า Image
 
 public class SplashX_BossPhase1Manager : MonoBehaviour
 {
@@ -17,6 +19,9 @@ public class SplashX_BossPhase1Manager : MonoBehaviour
 
     private bool phase1Complete = false;
     private bool rightWallDestroyed = false;
+
+    [Header("Next Phase Transition")]
+    public string nextPhaseSceneName = "BossRoom_Phase2";
 
     void Start()
     {
@@ -111,8 +116,42 @@ public class SplashX_BossPhase1Manager : MonoBehaviour
         }
 
         yield return new WaitForSeconds(2f);
+        yield return StartCoroutine(FadeAndLoadNextPhase());
+    }
 
-        // เตรียมโหลดฉาก เฟส 2 (เดี๋ยวค่อยว่ากัน!)
-        Debug.Log("🎬 จบ Outro! เตรียมลุย Phase 2!");
+    // สร้างระบบเฟดจอดำแบบเขียนโค้ดสด ไม่ต้องง้อ Canvas
+    IEnumerator FadeAndLoadNextPhase()
+    {
+        Debug.Log("🎬 กำลังโหลดฉาก Phase 2...");
+
+        GameObject canvasObj = new GameObject("FadeCanvas");
+        Canvas canvas = canvasObj.AddComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvas.sortingOrder = 999;
+
+        GameObject imgObj = new GameObject("FadeImage");
+        imgObj.transform.SetParent(canvasObj.transform, false);
+        Image fadeImage = imgObj.AddComponent<Image>();
+        fadeImage.color = new Color(0, 0, 0, 0);
+
+        RectTransform rect = fadeImage.GetComponent<RectTransform>();
+        rect.anchorMin = Vector2.zero;
+        rect.anchorMax = Vector2.one;
+        rect.sizeDelta = Vector2.zero;
+
+        // ค่อยๆ มืดลง 1.5 วินาที
+        float fadeDuration = 1.5f;
+        float elapsed = 0f;
+        while (elapsed < fadeDuration)
+        {
+            float alpha = Mathf.Lerp(0f, 1f, elapsed / fadeDuration);
+            fadeImage.color = new Color(0, 0, 0, alpha);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        fadeImage.color = Color.black;
+
+        // ย้ายไปฉากเฟส 2
+        SceneManager.LoadScene(nextPhaseSceneName);
     }
 }
