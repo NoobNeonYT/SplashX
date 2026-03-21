@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Audio;
 
 [RequireComponent(typeof(SplashX_BossNode))]
 public class SplashX_BossMonsterSpawnerAI : MonoBehaviour
@@ -54,32 +53,5 @@ public class SplashX_BossMonsterSpawnerAI : MonoBehaviour
             yield return new WaitForSeconds(spawnCooldown);
         }
     }
-    // 🔥 ระบบคุมเสียงเดิน
-    private void HandleWalkSound()
-    {
-        if (audioSource == null || Walk == null) return;
 
-        // เช็คเงื่อนไข: ต้องอยู่บนพื้น + มีการกดปุ่มเดิน + ไม่ได้กำลังตี/พุ่ง/เจ็บ/ตาย
-        bool isWalking = isGrounded && Mathf.Abs(moveInput) > 0 && !isAttacking && !isDashing && !isHurt && (playerStats != null && playerStats.currentHp > 0);
-
-        if (isWalking)
-        {
-            // ถ้ายังไม่ได้เล่นเสียงเดิน ให้เริ่มเล่น (และตั้งค่าให้มันเล่นวนซ้ำ Loop)
-            if (!audioSource.isPlaying || audioSource.clip != Walk)
-            {
-                audioSource.clip = Walk;
-                audioSource.loop = true; // เปิด Loop ให้เสียงเดินเล่นต่อเนื่อง
-                audioSource.Play();
-            }
-        }
-        else
-        {
-            // ถ้าหยุดเดิน หรือกระโดดลอยฟ้า ให้หยุดเสียงเดินทันที
-            if (audioSource.clip == Walk && audioSource.isPlaying)
-            {
-                audioSource.Stop();
-                audioSource.loop = false; // ปิด Loop เผื่อเสียงอื่นมาใช้ต่อ
-            }
-        }
-    }
 }
