@@ -153,12 +153,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SplashX_HealthPickup
   healAmount: 20
-  pickupEffect: {fileID: 0}
+  pickupEffect: {fileID: 2508948298347254637, guid: 779e4cb8bc880db48882fdf7fc59ce98, type: 3}
   dropForceX: 3
   dropForceY: 6
   pickupDelay: 1.2
   spinSpeed: 150
-  hoverHeight: 0.2
+  baseOffset: 0.5
+  bounceHeight: 0.2
   hoverSpeed: 4
   groundLayer:
     serializedVersion: 2
