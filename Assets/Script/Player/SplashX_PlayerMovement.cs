@@ -1062,4 +1062,30 @@ public class SplashX_PlayerMovement : MonoBehaviour
             }
         }
     }
+    //private void HandleWalkSound()
+    //{
+    //    if (audioSource == null || Walk == null) return;
+
+    //    bool isWalking = isGrounded && (Mathf.Abs(moveInput) > 0.1f);
+
+    //    if (isWalking)
+    //    {
+    //        Debug.Log("แตะพื้นและกำลังเดิน! เสียงต้องดังแล้ว!"); 
+
+    //        if (!audioSource.isPlaying || audioSource.clip != Walk)
+    //        {
+    //            audioSource.clip = Walk;
+    //            audioSource.loop = true;
+    //            audioSource.Play();
+    //        }
+    //    }
+    //    else
+    //    {
+    //        if (audioSource.clip == Walk && audioSource.isPlaying)
+    //        {
+    //            audioSource.Stop();
+    //            audioSource.loop = false;
+    //        }
+    //    }
+    //}
 }

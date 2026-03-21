@@ -67,27 +67,52 @@ public class SplashX_BossPhase1Manager : MonoBehaviour
 
     IEnumerator PlayOutroCinematic()
     {
-        Debug.Log("ชนะเฟส 1! เริ่มเล่นฉาก Cinematic ย้ายไปเฟส 2...");
+        Debug.Log("ชนะเฟส 1! เริ่มเล่นฉาก Cinematic...");
 
-        // ล็อกกล้อง สั่นจอ หรือหยุดผู้เล่นตรงนี้ได้ตามใจชอบ
-
-        // 1. เลื่อนบอสไกลๆ ลงเหว
-        while (Vector2.Distance(farawayBoss.position, abyssTarget.position) > 0.1f)
+        // 1. เลื่อนบอสไกลๆ (Moon) ตกลงไปในเหว
+        if (farawayBoss != null && abyssTarget != null)
         {
-            farawayBoss.position = Vector3.MoveTowards(farawayBoss.position, abyssTarget.position, 3f * Time.deltaTime);
-            yield return null;
+            while (Vector2.Distance(farawayBoss.position, abyssTarget.position) > 0.1f)
+            {
+                farawayBoss.position = Vector3.MoveTowards(farawayBoss.position, abyssTarget.position, 5f * Time.deltaTime);
+                yield return null;
+            }
         }
 
-        yield return new WaitForSeconds(1f);
+        // 2. รอซักแป๊บนึง ให้คนเล่นตายใจ
+        yield return new WaitForSeconds(1.5f);
 
-        // 2. เลื่อน UFO ลงมาจากขอบจอบน
-        while (Vector2.Distance(ufoObject.position, ufoTarget.position) > 0.1f)
+        // 3. UFO ยักษ์ ลอยลงมาตรงกลางจอ
+        if (ufoObject != null && ufoTarget != null)
         {
-            ufoObject.position = Vector3.MoveTowards(ufoObject.position, ufoTarget.position, 5f * Time.deltaTime);
-            yield return null;
+            while (Vector2.Distance(ufoObject.position, ufoTarget.position) > 0.1f)
+            {
+                ufoObject.position = Vector3.MoveTowards(ufoObject.position, ufoTarget.position, 6f * Time.deltaTime);
+                yield return null;
+            }
         }
 
-        // 3. เตรียมโหลดฉาก เฟส 2 (เดี๋ยวค่อยว่ากัน!)
-        Debug.Log("โหลดฉาก Phase 2!");
+        yield return new WaitForSeconds(0.5f);
+
+        // 4. ไฮไลต์เด็ด: UFO ดูด Moon กลับขึ้นมาประกอบร่าง! 
+        // (เลื่อนดวงจันทร์จากก้นเหว กลับขึ้นมาหาตำแหน่ง UFO แบบพุ่งปรี๊ด)
+        if (farawayBoss != null && ufoObject != null)
+        {
+            Debug.Log("🛸 UFO ลำแสงแทรกเตอร์ทำงาน! กำลังดูดดวงจันทร์ขึ้นมา...");
+            while (Vector2.Distance(farawayBoss.position, ufoObject.position) > 0.1f)
+            {
+                // ความเร็ว 15f คือดูดขึ้นมาอย่างไว
+                farawayBoss.position = Vector3.MoveTowards(farawayBoss.position, ufoObject.position, 15f * Time.deltaTime);
+                yield return null;
+            }
+
+            // พอตัวมันชนกับ UFO ปุ๊บ ปิดรูปดวงจันทร์ทิ้งให้เหมือนประกอบร่างเสร็จแล้ว
+            farawayBoss.gameObject.SetActive(false);
+        }
+
+        yield return new WaitForSeconds(2f);
+
+        // เตรียมโหลดฉาก เฟส 2 (เดี๋ยวค่อยว่ากัน!)
+        Debug.Log("🎬 จบ Outro! เตรียมลุย Phase 2!");
     }
 }
