@@ -1065,17 +1065,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 748d7e2e385c315428c354695a6103bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SplashX_CameraControl
---- !u!114 &607775035 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7709527806035824811, guid: 8ceee8bd419e7b747998fe69fa0b16c2, type: 3}
-  m_PrefabInstance: {fileID: 930405568325308188}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f9dfa5b682dcd46bda6128250e975f58, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineCamera
 --- !u!1 &636507623
 GameObject:
   m_ObjectHideFlags: 0
@@ -1323,7 +1312,7 @@ MonoBehaviour:
   bigMoon: {fileID: 1630747265}
   bigMoonTarget: {fileID: 1877561135}
   playerCamScript: {fileID: 607775034}
-  cinematicVcam: {fileID: 607775035}
+  cinematicVcam: {fileID: 1988160433}
   shakeDuration: 1.5
   shakeAmplitude: 3
   bigMoonSpeed: 6
@@ -3561,6 +3550,10 @@ PrefabInstance:
     - target: {fileID: 6518597441627352954, guid: 8ceee8bd419e7b747998fe69fa0b16c2, type: 3}
       propertyPath: m_Name
       value: CinemachineCamera
+      objectReference: {fileID: 0}
+    - target: {fileID: 6518597441627352954, guid: 8ceee8bd419e7b747998fe69fa0b16c2, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
       objectReference: {fileID: 0}
     - target: {fileID: 7265272728893843722, guid: 8ceee8bd419e7b747998fe69fa0b16c2, type: 3}
       propertyPath: Damping
