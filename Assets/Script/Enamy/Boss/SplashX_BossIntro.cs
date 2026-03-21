@@ -5,16 +5,16 @@ using UnityEngine.SceneManagement;
 public class SplashX_BossIntro : MonoBehaviour
 {
     [Header("Cinematic Objects")]
-    public Transform bigMoon;       // ดวงจันทร์ดวงใหญ่ (ฉากหลัง)
-    public Transform bigMoonTarget; // จุดที่ดวงจันทร์ใหญ่จะลอยขึ้นไป (สร้าง Empty Object ทิ้งไว้นอกจอ)
-    public Transform smallMoon;     // ดวงจันทร์ดวงเล็ก
-    public Transform smallMoonTarget; // จุดที่ดวงจันทร์เล็กจะลอยลงมา
+    public Transform bigMoon;
+    public Transform bigMoonTarget;
+    public Transform smallMoon;
+    public Transform smallMoonTarget; 
 
     [Header("Settings")]
     public float moonMoveSpeed = 2f;
     public float shakeDuration = 1.5f;
     public float shakeMagnitude = 0.3f;
-    public string bossSceneName = "BossRoom_Phase1"; // ชื่อฉากห้องบอสที่จะโหลดไป
+    public string bossSceneName = "BossRoom_Phase1"; 
 
     private bool isTriggered = false;
 
@@ -29,7 +29,6 @@ public class SplashX_BossIntro : MonoBehaviour
 
     IEnumerator PlayIntroCinematic()
     {
-        // 1. กล้องสั่น! (ถอดการควบคุมผู้เล่นด้วยถ้ามีสคริปต์คุม)
         Vector3 originalCamPos = Camera.main.transform.localPosition;
         float elapsed = 0.0f;
 
@@ -41,9 +40,8 @@ public class SplashX_BossIntro : MonoBehaviour
             elapsed += Time.deltaTime;
             yield return null;
         }
-        Camera.main.transform.localPosition = originalCamPos; // คืนค่ากล้อง
+        Camera.main.transform.localPosition = originalCamPos; 
 
-        // 2. ดวงจันทร์ใหญ่ลอยขึ้น และดวงจันทร์เล็กลอยลงมา
         while (Vector2.Distance(bigMoon.position, bigMoonTarget.position) > 0.1f ||
                Vector2.Distance(smallMoon.position, smallMoonTarget.position) > 0.1f)
         {
@@ -52,13 +50,10 @@ public class SplashX_BossIntro : MonoBehaviour
             yield return null;
         }
 
-        // ทำลายดวงจันทร์ใหญ่ทิ้ง
         Destroy(bigMoon.gameObject);
 
-        // รอจังหวะแป๊บนึงให้ผู้เล่นเห็นว่ามันลงมาแล้ว
         yield return new WaitForSeconds(1f);
 
-        // 3. ย้ายซีนไปห้องบอส!
         SceneManager.LoadScene(bossSceneName);
     }
 }
