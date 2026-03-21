@@ -190,7 +190,7 @@ MonoBehaviour:
   doubleTapTime: 0.25
   fastFallDamage: 30
   fastFallHitRadius: 3
-  heavyLandVFX: {fileID: 5875405173272680704, guid: 7892240fff4091040bb6847cec808885, type: 3}
+  heavyLandVFX: {fileID: 904149248494219859, guid: 507b4244a0ca9f2408402ee399955415, type: 3}
   maxJumps: 2
   dashSpeed: 20
   dashDuration: 0.4
@@ -222,7 +222,7 @@ MonoBehaviour:
   hit3Damage: 20
   hit3AnimTime: 0.4
   hit3SFX: {fileID: 0}
-  hit3VFX: {fileID: 0}
+  hit3VFX: {fileID: 899593174130216466, guid: b1310d93269657844a3d22a0d4b1941d, type: 3}
   shotgunProjectilePrefab: {fileID: 8476664431954637600, guid: 889833ec7d049a442bfca739c4069b7d, type: 3}
   shotgunKnockbackForce: 5
   shotgunAnimTime: 0.5
@@ -232,7 +232,7 @@ MonoBehaviour:
   skill1Damage: 25
   skill1AnimTime: 0.5
   skill1SFX: {fileID: 0}
-  skill1VFX: {fileID: 0}
+  skill1VFX: {fileID: 1495219201683525420, guid: 46a04ec92f083244cb1b1d88d0da45cf, type: 3}
   skill1ProjectilePrefab: {fileID: 8476664431954637600, guid: 889833ec7d049a442bfca739c4069b7d, type: 3}
   smashKey: 105
   smashStaminaCost: 100
@@ -244,10 +244,10 @@ MonoBehaviour:
   smashDownSpeed: 50
   smashRecoverTime: 0.5
   smashSFX: {fileID: 0}
-  smashVFX: {fileID: 0}
+  smashVFX: {fileID: 904149248494219859, guid: 507b4244a0ca9f2408402ee399955415, type: 3}
   ultimateChargeRequired: 500
   currentUltimateCharge: 0
-  ultimateReadyAura: {fileID: 0}
+  ultimateReadyAura: {fileID: 719717538341084321, guid: 5b6455e24fd80034ca7a3b9a800148eb, type: 3}
   ultimateDashSpeed: 50
   ultimateDashDuration: 0.5
   starDamage: 7
@@ -256,7 +256,7 @@ MonoBehaviour:
   dashTrail: {fileID: 0}
   ultimateDashSFX: {fileID: 0}
   starSlashSFX: {fileID: 0}
-  ultimateSmashVFX: {fileID: 0}
+  ultimateSmashVFX: {fileID: 904149248494219859, guid: 507b4244a0ca9f2408402ee399955415, type: 3}
   ultDropHeight: 2
   ultDropSpeed: 80
   ultThrowDamage: 20
@@ -302,14 +302,14 @@ MonoBehaviour:
   enemyLayers:
     serializedVersion: 2
     m_Bits: 256
-  bloodVFXPrefab: {fileID: 0}
-  overhealSparkVFX: {fileID: 0}
+  bloodVFXPrefab: {fileID: 7966991345827725075, guid: 7a68891664e1f2d43824253887dfc4ff, type: 3}
+  overhealSparkVFX: {fileID: 2508948298347254637, guid: 779e4cb8bc880db48882fdf7fc59ce98, type: 3}
   slowDuration: 10
   timeScaleAmount: 0.4
   berserkDuration: 10
   berserkBonusDamage: 20
   berserkDamageReduction: 0.5
-  berserkAuraVFX: {fileID: 0}
+  berserkAuraVFX: {fileID: 719717538341084321, guid: edab6066faf91554ab511b7274947002, type: 3}
   shakeIntensity: 0.1
   isBerserk: 0
 --- !u!114 &7484056791007689370
