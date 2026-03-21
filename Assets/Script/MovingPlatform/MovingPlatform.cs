@@ -10,12 +10,18 @@ public class MovingPlatform : MonoBehaviour
 
     void Start()
     {
-        targetPos = leftEndPos.position;
+
+        if (leftEndPos != null)
+        {
+            targetPos = leftEndPos.position;
+        }
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        transform.position = Vector3.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
+        if (rightStartPos == null || leftEndPos == null) return;
+
+        transform.position = Vector3.MoveTowards(transform.position, targetPos, speed * Time.fixedDeltaTime);
 
         if (Vector3.Distance(transform.position, targetPos) < 0.1f)
         {
@@ -25,21 +31,24 @@ public class MovingPlatform : MonoBehaviour
                 targetPos = leftEndPos.position;
         }
     }
-    private void OnCollisionEnter(Collision collision)
+
+
+    private void OnTriggerEnter(Collider other)
     {
-        // เมื่อตัวละครมาเหยียบ ให้กลายเป็นลูกของ Platform (จะขยับตามกัน)
-        if (collision.gameObject.CompareTag("Player"))
+
+        if (other.CompareTag("Player"))
         {
-            collision.transform.SetParent(transform);
+            other.transform.SetParent(transform);
+            Debug.Log("Player is now stuck to platform!");
         }
     }
 
-    private void OnCollisionExit(Collision collision)
+    private void OnTriggerExit(Collider other)
     {
-        // เมื่อตัวละครกระโดดออก ให้ยกเลิกการเป็นลูก
-        if (collision.gameObject.CompareTag("Player"))
+        if (other.CompareTag("Player"))
         {
-            collision.transform.SetParent(null);
+            other.transform.SetParent(null);
+            Debug.Log("Player left platform!");
         }
     }
 }
