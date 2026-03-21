@@ -1317,7 +1317,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SplashX_Enemy
   healthPickupPrefab: {fileID: 8713388456517526938, guid: b0cedb66d4203f249ac524f0cc2cbcbe, type: 3}
   dropChance: 0.083
-  maxHealth: 100
+  maxHealth: 60
   currentHealth: 0
   isBoss: 0
   isBossDontDestroy: 0

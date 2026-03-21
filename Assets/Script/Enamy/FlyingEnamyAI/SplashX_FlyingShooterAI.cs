@@ -43,6 +43,10 @@ public class SplashX_FlyingShooterAI : MonoBehaviour
     [Header("Death Effects")]
     public GameObject deathVFX; // 🔥 เอฟเฟกต์ระเบิดตอนตาย (Prefab)
 
+    [Header("Detection")]
+    public float detectionRange = 10f;
+    private bool playerDetected = false;
+
     private Rigidbody2D rb;
     private SplashX_Enemy enemyStats;
     private Transform player;
@@ -76,6 +80,16 @@ public class SplashX_FlyingShooterAI : MonoBehaviour
         }
 
         if (player == null || currentState == FlyingState.Dead) return;
+
+        float distance = Vector2.Distance(transform.position, player.position);
+
+        if (!playerDetected)
+        {
+            if (distance <= detectionRange)
+                playerDetected = true;
+            else
+                return;
+        }
 
         if (enemyStats.isStunned)
         {

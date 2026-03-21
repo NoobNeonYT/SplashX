@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 15915052986654454}
   - component: {fileID: 3877072872414439742}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: FontRigntLeg Solver
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -74,7 +74,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5768905316770792208}
   - component: {fileID: 6117015891071072891}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: BackLeftLeg Solver
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -137,7 +137,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6241412556423363345}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: FontLeftLeg Solver_Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -168,7 +168,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4126782085132599337}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: BackRigntLeg Effector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -199,7 +199,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7284323094031926697}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: FontRigntLeg Solver_Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -231,7 +231,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2980570516473239579}
   - component: {fileID: 2316636550820478688}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: FontLeftLeg Solver
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -294,7 +294,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7276223512317627564}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GroundCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -325,7 +325,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8211157281123587010}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: BackLeftLeg Effector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -357,7 +357,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1174879145667153154}
   - component: {fileID: 2331138431287325305}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: BackRigntLeg Solver
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -420,7 +420,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 622056190899662481}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: FontRigntLeg Effector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -451,7 +451,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4230756954480592108}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: FontLeftLeg Effector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -482,7 +482,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4778675207350191684}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: BackRigntLeg Solver_Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -513,7 +513,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3286781709121682525}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: BackLeftLeg Solver_Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -544,7 +544,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9064812002926639585}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Solver
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -579,7 +579,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4513015049216191052}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -621,6 +621,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: WalkEnemyMissile
       objectReference: {fileID: 0}
+    - target: {fileID: -8653719598885068355, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: -8441254266349445229, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: -8303398073847028597, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
       propertyPath: m_LocalRotation.w
       value: 0.9859011
@@ -648,6 +656,10 @@ PrefabInstance:
     - target: {fileID: -7986189361177264997, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
       propertyPath: m_Name
       value: UpperBackLeftLeg
+      objectReference: {fileID: 0}
+    - target: {fileID: -7986189361177264997, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: -7552582706839291426, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
       propertyPath: m_LocalScale.x
@@ -709,9 +721,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: UpperBackRightLeg
       objectReference: {fileID: 0}
+    - target: {fileID: -7519722154212866590, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: -7452997403582366675, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
       propertyPath: m_Name
       value: DownBackLeftLeg
+      objectReference: {fileID: 0}
+    - target: {fileID: -7452997403582366675, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: -7165880034659061930, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
       propertyPath: m_SortingOrder
@@ -724,6 +744,10 @@ PrefabInstance:
     - target: {fileID: -6900818959896083359, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
       propertyPath: m_Name
       value: FontRightLeg
+      objectReference: {fileID: 0}
+    - target: {fileID: -6900818959896083359, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: -6580564137915790795, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
       propertyPath: m_LocalRotation.w
@@ -741,6 +765,10 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: 0.31537104
       objectReference: {fileID: 0}
+    - target: {fileID: -5769201376709229236, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: -5584056421218301835, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
       propertyPath: m_LocalRotation.w
       value: -0.014914701
@@ -748,6 +776,10 @@ PrefabInstance:
     - target: {fileID: -5584056421218301835, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
       propertyPath: m_LocalRotation.z
       value: -0.9998888
+      objectReference: {fileID: 0}
+    - target: {fileID: -5172397850970971526, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: -4698406570823255048, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
       propertyPath: m_LocalRotation.w
@@ -757,21 +789,53 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: -0.04181974
       objectReference: {fileID: 0}
+    - target: {fileID: -4646046779897426330, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: -4264676191942585181, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: -3422301874369946903, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: -3351868363131983666, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
       propertyPath: m_Name
       value: DownBackRigntLeg
+      objectReference: {fileID: 0}
+    - target: {fileID: -3351868363131983666, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: -856138430712955627, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
       propertyPath: m_Name
       value: Shell
       objectReference: {fileID: 0}
+    - target: {fileID: -856138430712955627, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: -836853626962546506, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: -735985239012028135, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
       propertyPath: m_Name
       value: FontLeftLeg
       objectReference: {fileID: 0}
+    - target: {fileID: -735985239012028135, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: -469542070303478727, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
       propertyPath: m_Name
       value: StopSign
+      objectReference: {fileID: 0}
+    - target: {fileID: -469542070303478727, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 683650805199822136, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
       propertyPath: m_SortingOrder
@@ -781,6 +845,10 @@ PrefabInstance:
       propertyPath: m_SortingOrder
       value: 156
       objectReference: {fileID: 0}
+    - target: {fileID: 2062215214663292371, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 2608102985780763276, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
       propertyPath: m_SortingOrder
       value: 153
@@ -788,6 +856,14 @@ PrefabInstance:
     - target: {fileID: 2908940205763300328, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
       propertyPath: m_SortingOrder
       value: 152
+      objectReference: {fileID: 0}
+    - target: {fileID: 2963913353935177624, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 3352034118057160927, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 4153083917793864611, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
       propertyPath: m_SortingOrder
@@ -808,6 +884,14 @@ PrefabInstance:
     - target: {fileID: 7751269498262281042, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
       propertyPath: m_Name
       value: Body
+      objectReference: {fileID: 0}
+    - target: {fileID: 7751269498262281042, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 9221546236129184252, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -840,6 +924,15 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8653719598885068355, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4637997124162093946}
+    - targetCorrespondingSourceObject: {fileID: -8653719598885068355, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -9053563598511728505}
+    - targetCorrespondingSourceObject: {fileID: -8653719598885068355, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -6582655825575655608}
+    - targetCorrespondingSourceObject: {fileID: -8653719598885068355, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7280296332160262227}
   m_SourcePrefab: {fileID: 4843985084834002234, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
 --- !u!4 &231169297927745706 stripped
 Transform:
@@ -926,6 +1019,84 @@ MonoBehaviour:
     showGizmo: 1
   - color: {r: 0, g: 1, b: 1, a: 1}
     showGizmo: 1
+--- !u!114 &-9053563598511728505
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3914748317889747298}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ebefd0bdcbb63e49adcd234d37de8bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SplashX_Enemy
+  healthPickupPrefab: {fileID: 0}
+  dropChance: 0.1
+  maxHealth: 70
+  currentHealth: 0
+  isBoss: 0
+  isBossDontDestroy: 0
+  hitSparkPrefab: {fileID: 0}
+  stunDuration: 0.2
+  isStunned: 0
+--- !u!50 &-6582655825575655608
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3914748317889747298}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
+--- !u!114 &7280296332160262227
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3914748317889747298}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: feb6309aa6153a646ad16ea99a159a6f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SplashX_RangedMissileAI
+  activationRange: 20
+  deactivationRange: 25
+  moveSpeed: 3
+  preferredDistance: 8
+  retreatDistance: 4
+  wallCheckDistance: 0.6
+  edgeCheckDistance: 1.5
+  raycastOffsetY: 0.5
+  edgeCheckOffsetX: 0.8
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  jumpForce: 12
+  jumpCheckInterval: 2
+  jumpChance: 0.3
+  missilePrefab: {fileID: 2748182619241152592, guid: b911a5e3ea5b0194c85d14010d6c5e83, type: 3}
+  firePoint: {fileID: 0}
+  fireCooldown: 4
 --- !u!4 &4341621410687785169 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8217735960788967410, guid: 5330e410b51f1974985c14c71421c4a4, type: 3}
