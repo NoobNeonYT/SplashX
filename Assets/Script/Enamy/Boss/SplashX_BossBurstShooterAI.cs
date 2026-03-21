@@ -18,7 +18,7 @@ public class SplashX_BossBurstShooterAI : MonoBehaviour
     private SplashX_BossNode nodeStats;
     private Transform player;
 
-    void Start()
+    void OnEnable()
     {
         nodeStats = GetComponent<SplashX_BossNode>();
 

@@ -221,6 +221,7 @@ public class SplashX_PlayerMovement : MonoBehaviour
             {
                 queuedAttack = QueuedAttack.Skill;
             }
+
         }
 
         if (!isAttacking)
@@ -250,6 +251,7 @@ public class SplashX_PlayerMovement : MonoBehaviour
         }
 
         Flip();
+        HandleWalkSound();
     }
 
     void FixedUpdate()
@@ -1032,5 +1034,32 @@ public class SplashX_PlayerMovement : MonoBehaviour
         float gravityMult = multiplier * multiplier;
         defaultGravity *= gravityMult;
         if (rb != null) rb.gravityScale = defaultGravity;
+    }
+    private void HandleWalkSound()
+    {
+        if (audioSource == null || Walk == null) return;
+
+        // เช็คเงื่อนไข: เดินอยู่บนพื้น + มีการกดปุ่มซ้ายขวา + ไม่ได้ตี/พุ่ง/เจ็บ/ตาย
+        bool isWalking = isGrounded && Mathf.Abs(moveInput) > 0 && !isAttacking && !isDashing && !isHurt && (playerStats != null && playerStats.currentHp > 0);
+
+        if (isWalking)
+        {
+            // ถ้ายังไม่ได้เล่นเสียงเดิน ให้เล่นและเปิด Loop
+            if (!audioSource.isPlaying || audioSource.clip != Walk)
+            {
+                audioSource.clip = Walk;
+                audioSource.loop = true;
+                audioSource.Play();
+            }
+        }
+        else
+        {
+            // ถ้าหยุดเดิน หรือกระโดดลอยฟ้า ให้หยุดเสียงทันที
+            if (audioSource.clip == Walk && audioSource.isPlaying)
+            {
+                audioSource.Stop();
+                audioSource.loop = false;
+            }
+        }
     }
 }

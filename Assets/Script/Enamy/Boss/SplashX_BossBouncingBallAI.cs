@@ -21,7 +21,7 @@ public class SplashX_BossBouncingBallAI : MonoBehaviour
 
     private SplashX_BossNode nodeStats;
 
-    void Start()
+    void OnEnable()
     {
         nodeStats = GetComponent<SplashX_BossNode>();
         StartCoroutine(SpawnBallRoutine());
