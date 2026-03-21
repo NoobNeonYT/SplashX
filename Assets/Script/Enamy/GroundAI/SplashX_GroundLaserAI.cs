@@ -142,7 +142,6 @@ public class SplashX_GroundLaserAI : MonoBehaviour
 
     IEnumerator LaserRoutine()
     {
-        Debug.Log("🔥 [DEBUG 1] AI ตัดสินใจยิงเลเซอร์ เริ่มหยุดเดินแล้วชาร์จ!");
         isAttacking = true;
         StopMoving();
 
@@ -150,37 +149,39 @@ public class SplashX_GroundLaserAI : MonoBehaviour
 
         if (chargeVFX != null) chargeVFX.SetActive(true);
 
-        // รอเวลาชาร์จ
         yield return new WaitForSeconds(chargeTime);
 
         if (chargeVFX != null) chargeVFX.SetActive(false);
 
-        Debug.Log("🔥 [DEBUG 2] ชาร์จเสร็จแล้ว! เช็คความพร้อมก่อนยิง...");
-
-        // เช็คว่าลืมลากของใส่ช่องไหม
-        if (laserLine == null) Debug.LogError("❌ [ERROR] หา Line Renderer ไม่เจอ! ลืมลาก LaserBeam มาใส่ช่อง Laser Line หรือเปล่า?");
-        if (firePoint == null) Debug.LogError("❌ [ERROR] หา Fire Point ไม่เจอ! ลืมลากจุดยิงมาใส่ช่อง Fire Point หรือเปล่า?");
-
         if (!enemyStats.isStunned && laserLine != null && firePoint != null)
         {
-            Debug.Log("🔥 [DEBUG 3] ผ่านเงื่อนไข! เริ่มยิง Raycast ออกไป!");
-            laserLine.enabled = true;
-            laserLine.SetPosition(0, firePoint.position);
+            // 🌟 [โค้ดพระเจ้า บังคับข่มขืน Inspector แก้ปัญหาภาพหาย 100%]
+            laserLine.gameObject.SetActive(true); // ปลุก Object
+            laserLine.enabled = true;             // เปิด Component
+            laserLine.useWorldSpace = true;       // บังคับอิงพิกัดโลก
+            laserLine.positionCount = 2;          // บังคับมี 2 จุดเสมอ
+            laserLine.startWidth = 0.5f;          // บังคับความหนา
+            laserLine.endWidth = 0.5f;
+            laserLine.sortingOrder = 9999;        // บังคับอยู่หน้าสุดทะลุมิติ
 
-            // ยิง Raycast ล่องหน
+            // 🔥 บังคับเสก Material และสีแดงสดทึบแสง (กันปัญหาลืมดึง Alpha หรือ Material บั๊ก)
+            laserLine.material = new Material(Shader.Find("Sprites/Default"));
+            laserLine.startColor = Color.red;
+            laserLine.endColor = Color.red;
+
+            // บังคับแกน Z เป็น 0 
+            Vector3 startPos = new Vector3(firePoint.position.x, firePoint.position.y, 0f);
+            laserLine.SetPosition(0, startPos);
+
             RaycastHit2D hit = Physics2D.Raycast(firePoint.position, firePoint.right, laserDistance, hitLayers);
-
-            // 🌟 สำคัญมาก: วาดเส้น Raycast จำลองสีชมพูแป๊ดๆ ในหน้า Scene (ดูได้ตอนกด Play แล้วเปิดหน้า Scene ทิ้งไว้)
-            Debug.DrawRay(firePoint.position, firePoint.right * laserDistance, Color.magenta, 2f);
 
             if (hit.collider != null)
             {
-                Debug.Log("🎯 [DEBUG 4] เลเซอร์วิ่งไปชนวัตถุชื่อ: " + hit.collider.gameObject.name + " (Layer: " + LayerMask.LayerToName(hit.collider.gameObject.layer) + ")");
-                laserLine.SetPosition(1, hit.point);
+                Vector3 endPos = new Vector3(hit.point.x, hit.point.y, 0f);
+                laserLine.SetPosition(1, endPos);
 
                 if (hit.collider.CompareTag("Player"))
                 {
-                    Debug.Log("💀 [DEBUG 5] เลเซอร์โดนผู้เล่นเต็มๆ! สั่งลดเลือด");
                     SplashX_PlayerStats pStats = hit.collider.GetComponent<SplashX_PlayerStats>();
                     if (pStats != null) pStats.TakeDamage(laserDamage);
                 }
@@ -189,23 +190,18 @@ public class SplashX_GroundLaserAI : MonoBehaviour
             }
             else
             {
-                Debug.Log("💨 [DEBUG 4] เลเซอร์ไม่ชนอะไรเลย! (พุ่งทะลุอากาศไปจนสุดระยะ " + laserDistance + ")");
-                laserLine.SetPosition(1, firePoint.position + firePoint.right * laserDistance);
+                Vector3 endPos = firePoint.position + firePoint.right * laserDistance;
+                endPos.z = 0f;
+                laserLine.SetPosition(1, endPos);
             }
         }
-        else
-        {
-            Debug.LogWarning("⚠️ [DEBUG] ยิงไม่ได้! โดนขัดจังหวะ (isStunned: " + enemyStats.isStunned + ")");
-        }
 
-        // โชว์เส้นเลเซอร์ค้างไว้ 0.2 วิ
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.5f);
+
         if (laserLine != null) laserLine.enabled = false;
-        Debug.Log("🔌 [DEBUG 6] ปิดภาพเส้นเลเซอร์ เข้าสู่คูลดาวน์");
 
         yield return new WaitForSeconds(fireCooldown);
         isAttacking = false;
-        Debug.Log("✅ [DEBUG 7] คูลดาวน์เสร็จสิ้น พร้อมเดินต่อ");
     }
 
     void StopLaserIfStunned()

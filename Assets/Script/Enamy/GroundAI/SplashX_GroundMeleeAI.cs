@@ -7,14 +7,14 @@ using UnityEngine;
 public class SplashX_GroundMeleeAI : MonoBehaviour
 {
     [Header("Activation & Aggro")]
-    public float activationRange = 20f;   // ระยะเข้าวงเพื่อปลุก AI
-    public float deactivationRange = 25f; // ระยะหนีห่างเพื่อทิ้งโฟกัส (หลับ)
+    public float activationRange = 20f;
+    public float deactivationRange = 25f;
     private bool isAwake = false;
 
     [Header("Movement & Chase")]
     public float moveSpeed = 4f;
-    public float chaseRange = 15f;        // ระยะที่เริ่มวิ่งไล่ล่า (ควรน้อยกว่า activationRange)
-    public float stopDistance = 1.2f;     // ระยะง้างดาบตี
+    public float chaseRange = 15f;
+    public float stopDistance = 1.2f;
 
     [Header("Jump Settings")]
     public float jumpForce = 12f;
@@ -59,54 +59,46 @@ public class SplashX_GroundMeleeAI : MonoBehaviour
 
         if (isDead || player == null) return;
 
-        if (enemyStats.isStunned)
+        // 🔥 ปิดระบบชะงัก (Stun) ทิ้งไปเลย! มอนตัวนี้โดนตีก็ยังเดินหน้าบวกต่อ ไม่ยืนเอ๋อให้ตีฟรีแน่นอน
+        /* if (enemyStats.isStunned)
         {
-            anim.Play("Hurt");
+            anim.Play("Hurt"); 
             return;
         }
+        */
 
         float absoluteDist = Vector2.Distance(transform.position, player.position);
 
-        // 🔥 1. ระบบปลุก AI (เข้าวง = ตื่น, ออกนอกวงไกลๆ = หลับ)
         if (!isAwake)
         {
-            if (absoluteDist <= activationRange)
-            {
-                isAwake = true; // ตื่น! เริ่มทำงาน
-            }
-            else
-            {
-                return; // ตัดจบโค้ดตรงนี้ AI จะไม่เปลืองทรัพยากรคำนวณเลยถ้าเราอยู่ไกล
-            }
+            if (absoluteDist <= activationRange) isAwake = true;
+            else return;
         }
         else
         {
             if (absoluteDist > deactivationRange)
             {
-                isAwake = false; // กลับไปหลับ
+                isAwake = false;
                 rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
                 anim.SetBool("isWalking", false);
                 return;
             }
         }
 
-        // 2. ถ้าตื่นแล้ว ค่อยคำนวณการเดินและการโจมตีต่อ
         attackTimer -= Time.deltaTime;
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
 
-        // ถ้า Animator ของคุณยังไม่มี isGrounded ให้ปล่อยคอมเมนต์บรรทัดนี้ไว้นะครับ
+        // เช็คพื้น ถ้าคุณยังไม่มี object groundCheck ให้ปล่อยคอมเมนต์ไว้
+        // isGrounded = Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
         // anim.SetBool("isGrounded", isGrounded); 
 
         float distToPlayerY = player.position.y - transform.position.y;
 
-        // 3. ระบบไล่ล่าและโจมตี
         if (absoluteDist <= chaseRange && !isAttacking)
         {
-            FlipTowardsPlayer();
+            FlipTowardsPlayer(); // หันหน้าหาผู้เล่น (อัปเกรดแล้ว ไม่หันรัวๆ แน่นอน)
 
             if (absoluteDist <= stopDistance)
             {
-                // ถึงระยะง้างตี
                 rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
                 anim.SetBool("isWalking", false);
 
@@ -117,12 +109,10 @@ public class SplashX_GroundMeleeAI : MonoBehaviour
             }
             else
             {
-                // เดินไล่ฟัน
                 float dirX = facingRight ? 1f : -1f;
                 rb.linearVelocity = new Vector2(dirX * moveSpeed, rb.linearVelocity.y);
                 anim.SetBool("isWalking", true);
 
-                // เช็คกำแพง & ผู้เล่นอยู่สูงกว่า -> สั่งโดด
                 bool hitWall = Physics2D.Raycast(transform.position, Vector2.right * dirX, wallCheckDistance, groundLayer);
                 if (isGrounded && (distToPlayerY > jumpHeightThreshold || hitWall))
                 {
@@ -132,7 +122,6 @@ public class SplashX_GroundMeleeAI : MonoBehaviour
         }
         else if (!isAttacking)
         {
-            // อยู่นอกระยะวิ่งไล่ แต่ยังตื่นอยู่ (ยืนนิ่งๆ มองตาม)
             rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
             anim.SetBool("isWalking", false);
         }
@@ -141,8 +130,6 @@ public class SplashX_GroundMeleeAI : MonoBehaviour
     void Jump()
     {
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-
-        // ถ้า Animator ของคุณยังไม่มี Trigger ชื่อ Jump ให้คอมเมนต์บรรทัดนี้ไว้ก่อน
         // anim.SetTrigger("Jump"); 
     }
 
@@ -155,7 +142,8 @@ public class SplashX_GroundMeleeAI : MonoBehaviour
 
         yield return new WaitForSeconds(0.4f);
 
-        if (Vector2.Distance(transform.position, player.position) <= attackRange && !enemyStats.isStunned)
+        // 🔥 เอาเงื่อนไข !enemyStats.isStunned ออกด้วยตอนทำดาเมจ จะได้ฟันสวนได้เลย
+        if (Vector2.Distance(transform.position, player.position) <= attackRange)
         {
             SplashX_PlayerStats pStats = player.GetComponent<SplashX_PlayerStats>();
             if (pStats != null) pStats.TakeDamage(attackDamage);
@@ -176,28 +164,34 @@ public class SplashX_GroundMeleeAI : MonoBehaviour
 
     void FlipTowardsPlayer()
     {
-        if (player.position.x > transform.position.x && !facingRight)
+        float diffX = player.position.x - transform.position.x;
+
+        // 🔥 ระบบ Deadzone: ต้องห่างกันแกน X เกิน 0.1 หน่วย ถึงจะยอมหันหน้า (แก้บัคยืนซ้อนทับกันแล้วหน้าสั่น)
+        if (Mathf.Abs(diffX) > 0.1f)
         {
-            facingRight = true;
-            transform.Rotate(0f, 180f, 0f);
-        }
-        else if (player.position.x < transform.position.x && facingRight)
-        {
-            facingRight = false;
-            transform.Rotate(0f, 180f, 0f);
+            if (diffX > 0 && !facingRight)
+            {
+                facingRight = true;
+                transform.Rotate(0f, 180f, 0f);
+            }
+            else if (diffX < 0 && facingRight)
+            {
+                facingRight = false;
+                transform.Rotate(0f, 180f, 0f);
+            }
         }
     }
 
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.magenta;
-        Gizmos.DrawWireSphere(transform.position, activationRange); // วงปลุก
+        Gizmos.DrawWireSphere(transform.position, activationRange);
 
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, chaseRange); // วงวิ่งใส่
+        Gizmos.DrawWireSphere(transform.position, chaseRange);
 
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, stopDistance); // วงง้างดาบ
+        Gizmos.DrawWireSphere(transform.position, stopDistance);
 
         if (groundCheck != null)
         {
