@@ -3,8 +3,8 @@ using UnityEngine;
 public class AutoWheelSpinner : MonoBehaviour
 {
     [Header("Speed Settings")]
-    public float minMaxSpeed = 200f;
-    public float maxMaxSpeed = 900f;
+    public float minMaxSpeed = 400f;
+    public float maxMaxSpeed = 700f;
 
     [Header("Feel Settings")]
     public float startAcceleration = 40f;
