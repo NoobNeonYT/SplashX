@@ -53,4 +53,4 @@ public class SplashX_BossBouncingBallAI : MonoBehaviour
             yield return new WaitForSeconds(cooldownTime);
         }
     }
-}
+}                   
