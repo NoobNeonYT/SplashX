@@ -9,6 +9,7 @@ public class SplashX_PlayerMovement : MonoBehaviour
 
     [Header("Movement Settings")]
     public float moveSpeed = 8f;
+    public AudioClip Walk;
 
     [Header("Air Combo Settings")]
     public float airHangTimeOnHit = 0.4f;

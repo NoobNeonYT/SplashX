@@ -180,6 +180,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SplashX_PlayerMovement
   moveSpeed: 8
+  Walk: {fileID: 8300000, guid: c49bafc8ee7fb43418fc3e4e69f6dfc5, type: 3}
   airHangTimeOnHit: 0.4
   jumpForce: 16
   upwardGravityMult: 4
@@ -213,25 +214,25 @@ MonoBehaviour:
   hit1HitBox: {x: 2, y: 1}
   hit1Damage: 15
   hit1AnimTime: 0.4
-  hit1SFX: {fileID: 0}
+  hit1SFX: {fileID: 8300000, guid: fe7c308270b03844ab43021d83b2cb4b, type: 3}
   hit2HitBox: {x: 2, y: 2.5}
   hit2Damage: 20
   hit2AnimTime: 0.4
-  hit2SFX: {fileID: 0}
+  hit2SFX: {fileID: 8300000, guid: afdfa3dddcb503342b0982b8fe5f1c08, type: 3}
   hit3Radius: 3
   hit3Damage: 20
   hit3AnimTime: 0.4
-  hit3SFX: {fileID: 0}
+  hit3SFX: {fileID: 8300000, guid: 3be082b24ccef7c4280b18caf80627f3, type: 3}
   hit3VFX: {fileID: 899593174130216466, guid: b1310d93269657844a3d22a0d4b1941d, type: 3}
   shotgunProjectilePrefab: {fileID: 8476664431954637600, guid: 889833ec7d049a442bfca739c4069b7d, type: 3}
   shotgunKnockbackForce: 5
   shotgunAnimTime: 0.5
-  shotgunSFX: {fileID: 0}
+  shotgunSFX: {fileID: 8300000, guid: 5be01f77a6a2e6f438432a8f754e168e, type: 3}
   shotgunCooldown: 2
   skill1HitBox: {x: 4, y: 1}
   skill1Damage: 25
   skill1AnimTime: 0.5
-  skill1SFX: {fileID: 0}
+  skill1SFX: {fileID: 8300000, guid: 5be01f77a6a2e6f438432a8f754e168e, type: 3}
   skill1VFX: {fileID: 1495219201683525420, guid: 46a04ec92f083244cb1b1d88d0da45cf, type: 3}
   skill1ProjectilePrefab: {fileID: 8476664431954637600, guid: 889833ec7d049a442bfca739c4069b7d, type: 3}
   smashKey: 105
@@ -243,7 +244,7 @@ MonoBehaviour:
   smashHangTime: 0.2
   smashDownSpeed: 50
   smashRecoverTime: 0.5
-  smashSFX: {fileID: 0}
+  smashSFX: {fileID: 8300000, guid: 3be082b24ccef7c4280b18caf80627f3, type: 3}
   smashVFX: {fileID: 904149248494219859, guid: 507b4244a0ca9f2408402ee399955415, type: 3}
   ultimateChargeRequired: 500
   currentUltimateCharge: 0
@@ -255,7 +256,7 @@ MonoBehaviour:
   starDashSpeed: 40
   dashTrail: {fileID: 0}
   ultimateDashSFX: {fileID: 8300000, guid: 66924029bf6b8c54793fb31dfafab1c4, type: 3}
-  starSlashSFX: {fileID: 0}
+  starSlashSFX: {fileID: 8300000, guid: 5be01f77a6a2e6f438432a8f754e168e, type: 3}
   ultimateSmashVFX: {fileID: 904149248494219859, guid: 507b4244a0ca9f2408402ee399955415, type: 3}
   ultDropHeight: 2
   ultDropSpeed: 80
