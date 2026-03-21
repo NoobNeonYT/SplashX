@@ -254,7 +254,7 @@ MonoBehaviour:
   starDashOffset: 3
   starDashSpeed: 40
   dashTrail: {fileID: 0}
-  ultimateDashSFX: {fileID: 0}
+  ultimateDashSFX: {fileID: 8300000, guid: 66924029bf6b8c54793fb31dfafab1c4, type: 3}
   starSlashSFX: {fileID: 0}
   ultimateSmashVFX: {fileID: 904149248494219859, guid: 507b4244a0ca9f2408402ee399955415, type: 3}
   ultDropHeight: 2
@@ -264,10 +264,10 @@ MonoBehaviour:
   ultAoeRadius: 4
   anim: {fileID: 5924864756567728309}
   audioSource: {fileID: 0}
-  jumpSFX: {fileID: 0}
-  dashSFX: {fileID: 0}
-  landSFX: {fileID: 0}
-  heavyLandSFX: {fileID: 0}
+  jumpSFX: {fileID: 8300000, guid: 66924029bf6b8c54793fb31dfafab1c4, type: 3}
+  dashSFX: {fileID: 8300000, guid: 66924029bf6b8c54793fb31dfafab1c4, type: 3}
+  landSFX: {fileID: 8300000, guid: 3942f2c2ae45a1e41a66991e069f3823, type: 3}
+  heavyLandSFX: {fileID: 8300000, guid: 484b9b6e6557bcc46800f980ce69907b, type: 3}
   hurtDuration: 0.3
   boneModel: {fileID: 8930881034157349029}
   boneAnim: {fileID: 5924864756567728309}

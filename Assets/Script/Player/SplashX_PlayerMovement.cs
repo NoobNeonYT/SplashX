@@ -300,13 +300,13 @@ public class SplashX_PlayerMovement : MonoBehaviour
                     if (isFastFalling)
                     {
                         if (boneAnim != null) boneAnim.SetTrigger("LandHeavy");
-                        PlaySFX(heavyLandSFX);
+                        SFXManager.Instance.PlaySoundFXClip(heavyLandSFX, transform, 1f);
                         TriggerFastFallImpact();
                     }
                     else
                     {
                         if (boneAnim != null) boneAnim.SetTrigger("LandNormal");
-                        PlaySFX(landSFX);
+                        SFXManager.Instance.PlaySoundFXClip(landSFX, transform, 1f);      
                     }
                 }
                 isFastFalling = false;
@@ -337,7 +337,7 @@ public class SplashX_PlayerMovement : MonoBehaviour
         isFastFalling = false;
 
         if (boneAnim != null) boneAnim.SetTrigger("Jump");
-        PlaySFX(jumpSFX);
+        SFXManager.Instance.PlaySoundFXClip(jumpSFX, transform, 1f);
     }
 
     void UpdateAnimatorParameters()
@@ -376,7 +376,7 @@ public class SplashX_PlayerMovement : MonoBehaviour
         if (boneModel != null) boneModel.SetActive(true);
 
         if (boneAnim != null) boneAnim.SetTrigger("Shotgun");
-        PlaySFX(shotgunSFX);
+        SFXManager.Instance.PlaySoundFXClip(shotgunSFX, transform, 1f);
 
         if (shotgunProjectilePrefab != null && attackPoint != null)
         {
@@ -449,7 +449,7 @@ public class SplashX_PlayerMovement : MonoBehaviour
         if (fbfAnim != null) fbfAnim.SetTrigger("UltSkill");
 
         // 🔊 เล่นเสียงท่าพุ่ง
-        PlaySFX(ultimateDashSFX);
+        SFXManager.Instance.PlaySoundFXClip(ultimateDashSFX, transform, 1f);
 
         // 🚀 พุ่งตรงไปข้างหน้าแบบความเร็วแสง
         float dashTimer = 0f;
@@ -532,7 +532,7 @@ public class SplashX_PlayerMovement : MonoBehaviour
             }
 
             enemyScript.TakeDamage(starDamage);
-            PlaySFX(starSlashSFX);
+            SFXManager.Instance.PlaySoundFXClip(starSlashSFX, transform, 1f);
 
             yield return new WaitForSeconds(0.05f);
         }
@@ -583,8 +583,8 @@ public class SplashX_PlayerMovement : MonoBehaviour
 
         // 💥 ทันทีที่เท้าแตะพื้น 
         if (boneAnim != null) boneAnim.SetTrigger("LandHeavy");
-        PlaySFX(heavyLandSFX);
-        PlaySFX(smashSFX);
+        SFXManager.Instance.PlaySoundFXClip(heavyLandSFX, transform, 1f);
+        SFXManager.Instance.PlaySoundFXClip(smashSFX, transform, 1f);
         if (ultimateSmashVFX != null && groundCheck != null) Instantiate(ultimateSmashVFX, groundCheck.position, Quaternion.identity);
 
         // 💥 ระเบิดดาเมจ AOE รอบตัว! (ใช้ ultAoeRadius และ ultAoeDamage)
@@ -639,7 +639,7 @@ public class SplashX_PlayerMovement : MonoBehaviour
         }
 
         rb.linearVelocity = Vector2.zero;
-        PlaySFX(smashSFX);
+        SFXManager.Instance.PlaySoundFXClip(smashSFX, transform, 1f);
         ExecuteSmashHit();
 
         yield return new WaitForSecondsRealtime(smashRecoverTime); // 🔥 Realtime
@@ -672,21 +672,21 @@ public class SplashX_PlayerMovement : MonoBehaviour
     void ExecuteHit1()
     {
         if (fbfAnim != null) fbfAnim.SetTrigger("Attack1");
-        PlaySFX(hit1SFX);
+        SFXManager.Instance.PlaySoundFXClip(hit1SFX, transform, 1f);
         ProcessBoxHit(hit1HitBox, hit1Damage);
     }
 
     void ExecuteHit2()
     {
         if (fbfAnim != null) fbfAnim.SetTrigger("Attack2");
-        PlaySFX(hit2SFX);
+        SFXManager.Instance.PlaySoundFXClip(hit2SFX, transform, 1f);
         ProcessBoxHit(hit2HitBox, hit2Damage);
     }
 
     void ExecuteHit3()
     {
         if (fbfAnim != null) fbfAnim.SetTrigger("Attack3");
-        PlaySFX(hit3SFX);
+        SFXManager.Instance.PlaySoundFXClip(hit3SFX, transform, 1f);
         if (hit3VFX != null && attackPoint != null) Instantiate(hit3VFX, attackPoint.position, Quaternion.identity);
 
         if (attackPoint != null)
@@ -710,7 +710,7 @@ public class SplashX_PlayerMovement : MonoBehaviour
     void ExecuteSkill1()
     {
         if (fbfAnim != null) fbfAnim.SetTrigger("Skill1");
-        PlaySFX(skill1SFX);
+        SFXManager.Instance.PlaySoundFXClip(skill1SFX, transform, 1f);
 
         // 1. สร้างองศาหักหัวลง 20 องศา
         Quaternion downwardRotation = attackPoint.rotation * Quaternion.Euler(0f, 0f, -20f);
@@ -774,11 +774,6 @@ public class SplashX_PlayerMovement : MonoBehaviour
         isHeavySmashing = false;
     }
 
-    private void PlaySFX(AudioClip clip)
-    {
-        if (audioSource != null && clip != null) audioSource.PlayOneShot(clip);
-    }
-
     private void Flip()
     {
         if (moveInput > 0 && !facingRight)
@@ -805,7 +800,7 @@ public class SplashX_PlayerMovement : MonoBehaviour
             boneAnim.SetFloat("yVelocity", 0f);
             boneAnim.SetTrigger("Dash");
         }
-        PlaySFX(dashSFX);
+        SFXManager.Instance.PlaySoundFXClip(dashSFX, transform, 1f);
 
         float originalGravity = rb.gravityScale;
         rb.gravityScale = 0f;
