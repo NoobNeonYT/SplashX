@@ -1,30 +1,37 @@
 ﻿using UnityEngine;
 
-// 🛑 บังคับให้ Object ตัวนี้ต้องมี Collider แบบ Is Trigger เสมอ
-[RequireComponent(typeof(Collider2D))]
 public class SplashX_HarmfulObject : MonoBehaviour
 {
     [Header("Damage Settings")]
-    public int damageAmount = 20; // จำนวนความเสียหาย (ปรับได้ตามชอบ)
-    [Tooltip("ใส่ Tag ของผู้เล่น (ปกติคือ Player)")]
+    public int damageAmount = 20;
     public string playerTag = "Player";
 
-    // ฟังก์ชันนี้จะทำงานเมื่อ "เริ่มชน" กับวัตถุอื่น
+    // 1. สำหรับอาวุธประเภท "ทะลุผ่าน" (Is Trigger = true) เช่น เลเซอร์, ตอร์ปิโด
     void OnTriggerEnter2D(Collider2D other)
     {
-        // 1. เช็คว่าวัตถุที่ชนใช่ "ผู้เล่น" ไหม โดยดูจาก Tag
         if (other.CompareTag(playerTag))
         {
-            Debug.Log("🔥 อาวุธบอสโดนผู้เล่น! สร้างดาเมจ: " + damageAmount);
+            ApplyDamage(other.gameObject);
+        }
+    }
 
-            // 2. ดึงสคริปต์ SplashX_PlayerStats ของผู้เล่นออกมา
-            SplashX_PlayerStats playerStats = other.GetComponent<SplashX_PlayerStats>();
+    // 2. 🔥 เพิ่มใหม่! สำหรับอาวุธประเภท "ของแข็งเด้งได้" (Is Trigger = false) เช่น กระสุนเด้ง
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag(playerTag))
+        {
+            ApplyDamage(collision.gameObject);
+        }
+    }
 
-            // 3. ถ้าเจอสคริปต์เลือด สั่งหักเลือดทันที!
-            if (playerStats != null)
-            {
-                playerStats.TakeDamage(damageAmount);
-            }
+    // ฟังก์ชันหักเลือด (ยุบรวมไว้ตรงนี้จะได้ไม่เขียนโค้ดซ้ำ)
+    private void ApplyDamage(GameObject target)
+    {
+        Debug.Log("🔥 อาวุธบอสโดนผู้เล่น! สร้างดาเมจ: " + damageAmount);
+        SplashX_PlayerStats playerStats = target.GetComponent<SplashX_PlayerStats>();
+        if (playerStats != null)
+        {
+            playerStats.TakeDamage(damageAmount);
         }
     }
 }
