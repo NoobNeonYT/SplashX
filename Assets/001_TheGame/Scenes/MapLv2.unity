@@ -281,12 +281,12 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 72350464de032934b84fbb2f962ec016, type: 3}
---- !u!4 &657339567 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7260511672076077270, guid: 5c2ec9a1963c01142ba852f6e22e0235, type: 3}
-  m_PrefabInstance: {fileID: 714149243}
+--- !u!224 &701440830 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 8706687248617104366, guid: 72350464de032934b84fbb2f962ec016, type: 3}
+  m_PrefabInstance: {fileID: 568644148}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &714149243
+--- !u!1001 &773705883
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -362,6 +362,26 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: -0.0048680296
       objectReference: {fileID: 0}
+    - target: {fileID: 5205338532569166476, guid: 5c2ec9a1963c01142ba852f6e22e0235, type: 3}
+      propertyPath: maxPerk
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5205338532569166476, guid: 5c2ec9a1963c01142ba852f6e22e0235, type: 3}
+      propertyPath: skill1UI
+      value: 
+      objectReference: {fileID: 975432340}
+    - target: {fileID: 5205338532569166476, guid: 5c2ec9a1963c01142ba852f6e22e0235, type: 3}
+      propertyPath: skill2UI
+      value: 
+      objectReference: {fileID: 701440830}
+    - target: {fileID: 5205338532569166476, guid: 5c2ec9a1963c01142ba852f6e22e0235, type: 3}
+      propertyPath: skill3UI
+      value: 
+      objectReference: {fileID: 1954313701}
+    - target: {fileID: 5205338532569166476, guid: 5c2ec9a1963c01142ba852f6e22e0235, type: 3}
+      propertyPath: perkBarFill
+      value: 
+      objectReference: {fileID: 1312496676}
     - target: {fileID: 5583382936920455857, guid: 5c2ec9a1963c01142ba852f6e22e0235, type: 3}
       propertyPath: m_LocalRotation.w
       value: 0.64500415
@@ -637,6 +657,11 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
   CustomBlends: {fileID: 0}
+--- !u!224 &975432340 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 3536860624493725311, guid: 72350464de032934b84fbb2f962ec016, type: 3}
+  m_PrefabInstance: {fileID: 568644148}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1013090499
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -700,12 +725,23 @@ PrefabInstance:
     - target: {fileID: 7709527806035824811, guid: 8ceee8bd419e7b747998fe69fa0b16c2, type: 3}
       propertyPath: Target.TrackingTarget
       value: 
-      objectReference: {fileID: 657339567}
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8ceee8bd419e7b747998fe69fa0b16c2, type: 3}
+--- !u!114 &1312496676 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 621202572489265317, guid: 72350464de032934b84fbb2f962ec016, type: 3}
+  m_PrefabInstance: {fileID: 568644148}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!1001 &1934206736
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -767,13 +803,18 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 863171ca33fb89e43a6839eb2956a78c, type: 3}
+--- !u!224 &1954313701 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 3375257927684234312, guid: 72350464de032934b84fbb2f962ec016, type: 3}
+  m_PrefabInstance: {fileID: 568644148}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 841567249}
   - {fileID: 1934206736}
-  - {fileID: 714149243}
   - {fileID: 1013090499}
   - {fileID: 35963382}
   - {fileID: 568644148}
+  - {fileID: 773705883}

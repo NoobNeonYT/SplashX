@@ -5,9 +5,10 @@ using UnityEngine.UI;
 
 public class SplashX_BigNullManager : MonoBehaviour
 {
+
     [Header("Boss References (ลากมือ 2 ข้างมาใส่)")]
-    public SplashX_BigNullHand leftHand;
-    public SplashX_BigNullHand rightHand;
+    public SplashX_BigNullHand leftHand;          // แขนซ้ายรับสคริปต์แบบเงา
+    public SplashX_BigNullGroundArm rightHand;    // แขนขวารับสคริปต์แบบกวาดพื้น
 
     [Header("Transition Settings")]
     public string nextSceneName = "Phase3_Scene"; // ชื่อฉากต่อไปที่จะให้โหลด
@@ -20,11 +21,11 @@ public class SplashX_BigNullManager : MonoBehaviour
         // ถ้ากำลังเปลี่ยนฉากอยู่ ให้หยุดทำงานจะได้ไม่รันซ้ำ
         if (isTransitioning) return;
 
-        // 1. เช็คว่ามือซ้ายตายหรือยัง? (เช็คว่า Object หายไปแล้ว หรือติดสถานะ Dead)
+        // 1. เช็คว่ามือซ้ายตายหรือยัง? (เรียกนามสกุล HandState)
         bool isLeftDead = (leftHand == null || leftHand.currentState == SplashX_BigNullHand.HandState.Dead);
 
-        // 2. เช็คว่ามือขวาตายหรือยัง?
-        bool isRightDead = (rightHand == null || rightHand.currentState == SplashX_BigNullHand.HandState.Dead);
+        // 2. เช็คว่ามือขวาตายหรือยัง? (🔥 เปลี่ยนมาเรียกนามสกุล GroundArmState)
+        bool isRightDead = (rightHand == null || rightHand.currentState == SplashX_BigNullGroundArm.GroundArmState.Dead);
 
         // 3. ถ้าตายครบ 2 ข้าง ให้เริ่มกระบวนการเปลี่ยนฉาก
         if (isLeftDead && isRightDead)

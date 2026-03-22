@@ -1354,6 +1354,22 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: -0.0048454246
       objectReference: {fileID: 0}
+    - target: {fileID: 5205338532569166476, guid: 5c2ec9a1963c01142ba852f6e22e0235, type: 3}
+      propertyPath: skill1UI
+      value: 
+      objectReference: {fileID: 902590964}
+    - target: {fileID: 5205338532569166476, guid: 5c2ec9a1963c01142ba852f6e22e0235, type: 3}
+      propertyPath: skill2UI
+      value: 
+      objectReference: {fileID: 902590965}
+    - target: {fileID: 5205338532569166476, guid: 5c2ec9a1963c01142ba852f6e22e0235, type: 3}
+      propertyPath: skill3UI
+      value: 
+      objectReference: {fileID: 902590966}
+    - target: {fileID: 5205338532569166476, guid: 5c2ec9a1963c01142ba852f6e22e0235, type: 3}
+      propertyPath: perkBarFill
+      value: 
+      objectReference: {fileID: 902590967}
     - target: {fileID: 5583382936920455857, guid: 5c2ec9a1963c01142ba852f6e22e0235, type: 3}
       propertyPath: m_LocalRotation.w
       value: 0.644965
@@ -2708,6 +2724,32 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 72350464de032934b84fbb2f962ec016, type: 3}
+--- !u!224 &902590964 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 3536860624493725311, guid: 72350464de032934b84fbb2f962ec016, type: 3}
+  m_PrefabInstance: {fileID: 902590963}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &902590965 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 8706687248617104366, guid: 72350464de032934b84fbb2f962ec016, type: 3}
+  m_PrefabInstance: {fileID: 902590963}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &902590966 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 3375257927684234312, guid: 72350464de032934b84fbb2f962ec016, type: 3}
+  m_PrefabInstance: {fileID: 902590963}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &902590967 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 621202572489265317, guid: 72350464de032934b84fbb2f962ec016, type: 3}
+  m_PrefabInstance: {fileID: 902590963}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!1 &903333523
 GameObject:
   m_ObjectHideFlags: 0

@@ -3,7 +3,9 @@ using UnityEngine;
 
 public class SplashX_BigNullGroundArm : MonoBehaviour
 {
-    public enum GroundArmState { Inactive, Resting, Warning, Dashing, Stuck, Retracting }
+    // 🔥 เติม Dead เข้ามาให้ตรงนี้เรียบร้อยแล้วครับ
+    public enum GroundArmState { Inactive, Resting, Warning, Dashing, Stuck, Retracting, Dead }
+
     [Header("Current State")]
     public GroundArmState currentState = GroundArmState.Inactive;
 
@@ -32,7 +34,6 @@ public class SplashX_BigNullGroundArm : MonoBehaviour
     private int hoverArmMaxHp;
     private bool hasDamagedThisDash = false;
 
-    // เพิ่มตัวแปรมารับค่า Component ภาพและการชน
     private SpriteRenderer sr;
     private Collider2D col;
 
@@ -41,8 +42,6 @@ public class SplashX_BigNullGroundArm : MonoBehaviour
         sr = GetComponent<SpriteRenderer>();
         col = GetComponent<Collider2D>();
 
-        // 🔥 แก้ตรงนี้: เปลี่ยนจากการปิด gameObject เป็นการปิดภาพและการชนแทน
-        // เพื่อให้สคริปต์ยังคงแอบทำงานอยู่เบื้องหลังได้!
         if (sr != null) sr.enabled = false;
         if (col != null) col.enabled = false;
 
@@ -72,7 +71,6 @@ public class SplashX_BigNullGroundArm : MonoBehaviour
 
     void CheckPhase2Trigger()
     {
-        // เช็คกันเหนียวว่า maxHp ห้ามเป็น 0 ไม่งั้นเดี๋ยวหารเลขแล้ว Error
         if (hoverArmStats == null || hasWokenUp || hoverArmMaxHp <= 0) return;
 
         float currentHpPercent = (float)hoverArmStats.currentHealth / hoverArmMaxHp;
@@ -87,12 +85,10 @@ public class SplashX_BigNullGroundArm : MonoBehaviour
     {
         hasWokenUp = true;
 
-        // 🔥 เปิดภาพและการชนกลับมาให้ผู้เล่นเห็นและโดนดาเมจได้
         if (sr != null) sr.enabled = true;
         if (col != null) col.enabled = true;
 
         transform.position = rightStartPos.position;
-
         attackTimer = attackCooldown;
         currentState = GroundArmState.Resting;
 
