@@ -28,7 +28,7 @@ public class SplashX_MainMenu : MonoBehaviour
 
     void LoadGame()
     {
-        SceneManager.LoadScene("all_system_here");
+        SceneManager.LoadScene("Comic");
     }
 
     public void Play()
