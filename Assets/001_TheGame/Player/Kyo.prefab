@@ -274,6 +274,7 @@ MonoBehaviour:
   boneAnim: {fileID: 5924864756567728309}
   fbfAttackModel: {fileID: 4056917501176282037}
   fbfAnim: {fileID: 7460979159435455402}
+  stepInterval: 0.4
 --- !u!114 &5205338532569166476
 MonoBehaviour:
   m_ObjectHideFlags: 0

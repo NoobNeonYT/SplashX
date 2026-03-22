@@ -22,9 +22,11 @@ public class SFXManager : MonoBehaviour
 
         audioSource.volume = volume;
 
+        audioSource.pitch = Random.Range(0.9f, 1.1f);
+
         audioSource.Play();
 
-        float clipLength = audioClip.length;
+        float clipLength = audioSource.clip.length;
 
         Destroy(audioSource.gameObject, clipLength);
     }
