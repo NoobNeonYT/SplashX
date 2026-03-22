@@ -6,14 +6,17 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Prefab/Scenes/MainMenu.unity
+    path: Assets/001_TheGame/Scenes/MainMenu.unity
     guid: 4fdd87e3070427e4c9bd4b10d1e1907c
-  - enabled: 0
-    path: Assets/Prefab/Scenes/all_system_here/all_system_here.unity
-    guid: 8c9cfa26abfee488c85f1582747f6a02
-  - enabled: 0
-    path: Assets/Prefab/Scenes/all_system_here/all_system_hereBoss001.unity
-    guid: 9ccadafd72d61b442b02edee14bf569c
+  - enabled: 1
+    path: Assets/001_TheGame/Scenes/MapLv2.unity
+    guid: beea9fac929050a4ab171e3a7e431a7f
+  - enabled: 1
+    path: Assets/001_TheGame/Scenes/Background2_Boss.unity
+    guid: 63d2ec64ddc2d7346bf68dce1ac667f5
+  - enabled: 1
+    path: Assets/001_TheGame/Scenes/MapLv3.unity
+    guid: 21354bbfabb1b8142beec8ec225524e5
   - enabled: 1
     path: Assets/001_TheGame/Scenes/Final_Boss_Phase_0.unity
     guid: 7e9d7d6470fd09b4f8d3c53efc5ac39e
@@ -24,8 +27,11 @@ EditorBuildSettings:
     path: Assets/001_TheGame/Scenes/Final_Boss_Phase_2.unity
     guid: 672cb3c18ba90f347bd6c2a0212638cb
   - enabled: 1
-    path: Assets/001_TheGame/Scenes/Background2_Boss.unity
-    guid: 63d2ec64ddc2d7346bf68dce1ac667f5
+    path: Assets/001_TheGame/Scenes/ComicEnd.unity
+    guid: 04fa0ff5fb469534d87d8e59dd956b1d
+  - enabled: 1
+    path: Assets/001_TheGame/Scenes/Credit.unity
+    guid: baa98bee9ad5d644ea4e0cff8230d025
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
