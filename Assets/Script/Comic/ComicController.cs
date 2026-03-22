@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 
 public class ComicController : MonoBehaviour
 {
-    [Header("Select 4 Panels")]
+    [Header("Select Panels")]
     public GameObject[] comicPanels;
 
     [Header("Time")]
@@ -24,6 +24,7 @@ public class ComicController : MonoBehaviour
     public float transitionDelay = 2f;
 
     private Vector3[] _originalScales;
+    private bool isTransitioning = false;
 
     void Start()
     {
@@ -71,16 +72,25 @@ public class ComicController : MonoBehaviour
             gameObject.SetActive(false);
         }
 
-        // 🔥 เปิด transition
+        // 🔥 เรียก transition แบบ Invoke
+        StartTransition();
+    }
+
+    void StartTransition()
+    {
+        if (isTransitioning) return;
+        isTransitioning = true;
+
         if (transitionPanel != null)
         {
             transitionPanel.SetActive(true);
         }
 
-        // 🔥 รอ 2 วิ
-        yield return new WaitForSeconds(transitionDelay);
+        Invoke(nameof(LoadGame), transitionDelay);
+    }
 
-        // 🔥 โหลดฉากแบบที่คุณต้องการ
+    void LoadGame()
+    {
         SceneManager.LoadScene("MapLv2");
     }
 

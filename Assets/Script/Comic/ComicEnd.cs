@@ -1,41 +1,33 @@
-using System.Collections;
+Ôªøusing System.Collections;
 using UnityEngine;
-using UnityEngine.SceneManagement; 
-using UnityEngine.UI; 
+using UnityEngine.SceneManagement;
 
 public class ComicEnd : MonoBehaviour
 {
-    [Header("Select 4 Panels")]
+    [Header("Select Panels")]
     public GameObject[] comicPanels;
 
     [Header("Time")]
     public float delayBetweenPanels = 1.0f;
 
     [Header("Popup")]
-    [Tooltip("Pop Time")]
     public float popupDuration = 0.5f;
     public AnimationCurve popupCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
-    [Header("Scene Transition Setting")]
-    [Tooltip("Out Time (‡«≈“ÀπË«ß°ËÕπ‡√‘Ë¡‡ø¥®Õ¥”)")]
+    [Header("End Delay")]
     public float delayBeforeEnd = 2.0f;
 
-    [Tooltip("™◊ËÕ¢Õß Scene ∂—¥‰ª∑’ËµÈÕß°“√„ÀÈ‚À≈¥")]
-    public string nextSceneName;
-
-    [Header("Fade Setting")]
-    [Tooltip("≈“° UI Image  ’¥”∑’Ë¢¬“¬‡µÁ¡®Õ ¡“„ Ëµ√ßπ’È")]
-    public Image fadeImage;
-    [Tooltip("§«“¡‡√Á«„π°“√‡ø¥®Õ¥” («‘π“∑’)")]
-    public float fadeDuration = 1.0f;
+    [Header("Transition")]
+    public GameObject transitionPanel;
+    public float transitionDelay = 2f;
 
     private Vector3[] _originalScales;
+    private bool isLoading = false;
 
     void Start()
     {
         _originalScales = new Vector3[comicPanels.Length];
 
-        
         for (int i = 0; i < comicPanels.Length; i++)
         {
             if (comicPanels[i] != null)
@@ -46,13 +38,10 @@ public class ComicEnd : MonoBehaviour
             }
         }
 
-        
-        if (fadeImage != null)
+        // ‡∏õ‡∏¥‡∏î transition ‡πÑ‡∏ß‡πâ‡∏Å‡πà‡∏≠‡∏ô
+        if (transitionPanel != null)
         {
-            Color startColor = fadeImage.color;
-            startColor.a = 0f;
-            fadeImage.color = startColor;
-            fadeImage.gameObject.SetActive(true); 
+            transitionPanel.SetActive(false);
         }
 
         StartCoroutine(ShowComicPanelsWithPopup());
@@ -62,7 +51,6 @@ public class ComicEnd : MonoBehaviour
     {
         yield return new WaitForSeconds(0.5f);
 
-       
         for (int i = 0; i < comicPanels.Length; i++)
         {
             if (comicPanels[i] != null)
@@ -73,11 +61,11 @@ public class ComicEnd : MonoBehaviour
             }
         }
 
-        Debug.Log("‚™«Ï§Õ¡¡‘§§√∫·≈È« °”≈—ß√Õ‡æ◊ËÕ‡ø¥®Õ¥”...");
+        Debug.Log("Comic ‡∏à‡∏ö‡πÅ‡∏•‡πâ‡∏ß...");
         yield return new WaitForSeconds(delayBeforeEnd);
 
-        
-        StartCoroutine(FadeToBlackAndLoadScene());
+        // üî• ‡πÄ‡∏£‡∏¥‡πà‡∏°‡πÇ‡∏´‡∏•‡∏î
+        StartTransition();
     }
 
     IEnumerator AnimatePopup(int panelIndex)
@@ -89,8 +77,8 @@ public class ComicEnd : MonoBehaviour
         while (timer < popupDuration)
         {
             timer += Time.deltaTime;
-            float normalizedTime = timer / popupDuration;
-            float curveValue = popupCurve.Evaluate(normalizedTime);
+            float t = timer / popupDuration;
+            float curveValue = popupCurve.Evaluate(t);
             panel.transform.localScale = originalScale * curveValue;
             yield return null;
         }
@@ -98,43 +86,23 @@ public class ComicEnd : MonoBehaviour
         panel.transform.localScale = originalScale;
     }
 
-    
-    IEnumerator FadeToBlackAndLoadScene()
+    void StartTransition()
     {
-        if (fadeImage != null)
-        {
-            float timer = 0f;
-            Color color = fadeImage.color;
+        if (isLoading) return;
+        isLoading = true;
 
-           
-            while (timer < fadeDuration)
-            {
-                timer += Time.deltaTime;
-                color.a = Mathf.Lerp(0f, 1f, timer / fadeDuration);
-                fadeImage.color = color;
-                yield return null;
-            }
-
-            
-            color.a = 1f;
-            fadeImage.color = color;
-        }
-        else
+        // üî• ‡πÄ‡∏õ‡∏¥‡∏î‡∏´‡∏ô‡πâ‡∏≤‡πÇ‡∏´‡∏•‡∏î
+        if (transitionPanel != null)
         {
-            Debug.LogWarning("‰¡Ë‰¥È„ Ë UI Image ®Õ¥”‡Õ“‰«È ¿“æ‡≈¬µ—¥©—∫‰ª´’π„À¡Ë‡≈¬π–§√—∫!");
+            transitionPanel.SetActive(true);
         }
 
-        
-        yield return new WaitForSeconds(0.2f);
+        // üî• ‡∏£‡∏≠‡πÅ‡∏•‡πâ‡∏ß‡πÇ‡∏´‡∏•‡∏î Credit
+        Invoke(nameof(LoadScene), transitionDelay);
+    }
 
-        
-        if (!string.IsNullOrEmpty(nextSceneName))
-        {
-            SceneManager.LoadScene(nextSceneName);
-        }
-        else
-        {
-            Debug.LogError("¬—ß‰¡Ë‰¥Èµ—Èß™◊ËÕ Scene ∂—¥‰ª„π Inspector!");
-        }
+    void LoadScene()
+    {
+        SceneManager.LoadScene("Credit");
     }
 }
