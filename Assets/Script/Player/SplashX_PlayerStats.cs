@@ -210,4 +210,13 @@ public class SplashX_PlayerStats : MonoBehaviour
             if (currentStamina > maxStamina) currentStamina = maxStamina;
         }
     }
+
+    public void Bounce(float force)
+    {
+        if (rb == null) return;
+
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
+
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, force);
+    }
 }

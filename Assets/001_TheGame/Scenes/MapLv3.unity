@@ -171,6 +171,58 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5992143692114283529, guid: bc61f6fa1d7376b4a80c3f7027abcc4f, type: 3}
+      propertyPath: roomCount
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5992143692114283529, guid: bc61f6fa1d7376b4a80c3f7027abcc4f, type: 3}
+      propertyPath: noRepeatCount
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5992143692114283529, guid: bc61f6fa1d7376b4a80c3f7027abcc4f, type: 3}
+      propertyPath: middleRooms.Array.size
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5992143692114283529, guid: bc61f6fa1d7376b4a80c3f7027abcc4f, type: 3}
+      propertyPath: 'middleRooms.Array.data[0]'
+      value: 
+      objectReference: {fileID: 6290540094652004699, guid: c2443aa0f569f514b841e5bce7199abf, type: 3}
+    - target: {fileID: 5992143692114283529, guid: bc61f6fa1d7376b4a80c3f7027abcc4f, type: 3}
+      propertyPath: 'middleRooms.Array.data[1]'
+      value: 
+      objectReference: {fileID: 6290540094652004699, guid: abd8d065243616c4183957028ba8c180, type: 3}
+    - target: {fileID: 5992143692114283529, guid: bc61f6fa1d7376b4a80c3f7027abcc4f, type: 3}
+      propertyPath: 'middleRooms.Array.data[2]'
+      value: 
+      objectReference: {fileID: 6290540094652004699, guid: 0863b3dd55839cc41af3e7cfd683f2a7, type: 3}
+    - target: {fileID: 5992143692114283529, guid: bc61f6fa1d7376b4a80c3f7027abcc4f, type: 3}
+      propertyPath: 'middleRooms.Array.data[3]'
+      value: 
+      objectReference: {fileID: 6290540094652004699, guid: 98a0e5b96c1923741bcb83234c6205a1, type: 3}
+    - target: {fileID: 5992143692114283529, guid: bc61f6fa1d7376b4a80c3f7027abcc4f, type: 3}
+      propertyPath: 'middleRooms.Array.data[4]'
+      value: 
+      objectReference: {fileID: 6290540094652004699, guid: 63174fd4dd56efd4eaee3aed9967f018, type: 3}
+    - target: {fileID: 5992143692114283529, guid: bc61f6fa1d7376b4a80c3f7027abcc4f, type: 3}
+      propertyPath: 'middleRooms.Array.data[5]'
+      value: 
+      objectReference: {fileID: 6290540094652004699, guid: b301d588c4be79a4385ad5ef4fbb6141, type: 3}
+    - target: {fileID: 5992143692114283529, guid: bc61f6fa1d7376b4a80c3f7027abcc4f, type: 3}
+      propertyPath: 'middleRooms.Array.data[6]'
+      value: 
+      objectReference: {fileID: 6290540094652004699, guid: 2dcd5123f5c4c8a4b91ffa8284ad6701, type: 3}
+    - target: {fileID: 5992143692114283529, guid: bc61f6fa1d7376b4a80c3f7027abcc4f, type: 3}
+      propertyPath: 'middleRooms.Array.data[7]'
+      value: 
+      objectReference: {fileID: 6290540094652004699, guid: 7d4494667a7040c41b4dea533221fbde, type: 3}
+    - target: {fileID: 5992143692114283529, guid: bc61f6fa1d7376b4a80c3f7027abcc4f, type: 3}
+      propertyPath: 'middleRooms.Array.data[8]'
+      value: 
+      objectReference: {fileID: 6290540094652004699, guid: 94200297d9438c84d8a56d42e198f63a, type: 3}
+    - target: {fileID: 5992143692114283529, guid: bc61f6fa1d7376b4a80c3f7027abcc4f, type: 3}
+      propertyPath: 'middleRooms.Array.data[9]'
+      value: 
+      objectReference: {fileID: 6290540094652004699, guid: 4ae3e64f0d602b0458b1f86e94d5d5b6, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -185,12 +237,20 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 3958182108256031129, guid: 8ceee8bd419e7b747998fe69fa0b16c2, type: 3}
+      propertyPath: scoutSize
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3958182108256031129, guid: 8ceee8bd419e7b747998fe69fa0b16c2, type: 3}
+      propertyPath: combatSize
+      value: 3.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3958182108256031129, guid: 8ceee8bd419e7b747998fe69fa0b16c2, type: 3}
       propertyPath: mapBottomY
       value: -3
       objectReference: {fileID: 0}
     - target: {fileID: 3958182108256031129, guid: 8ceee8bd419e7b747998fe69fa0b16c2, type: 3}
       propertyPath: explorationSize
-      value: 4
+      value: 3.8
       objectReference: {fileID: 0}
     - target: {fileID: 5399462071623119819, guid: 8ceee8bd419e7b747998fe69fa0b16c2, type: 3}
       propertyPath: m_LocalPosition.x
