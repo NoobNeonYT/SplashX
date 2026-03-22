@@ -177,7 +177,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5992143692114283529, guid: bc61f6fa1d7376b4a80c3f7027abcc4f, type: 3}
       propertyPath: noRepeatCount
-      value: 4
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 5992143692114283529, guid: bc61f6fa1d7376b4a80c3f7027abcc4f, type: 3}
       propertyPath: middleRooms.Array.size
