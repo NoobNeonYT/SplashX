@@ -1,5 +1,6 @@
-using System.Collections;
+Ôªøusing System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class ComicController : MonoBehaviour
 {
@@ -10,19 +11,17 @@ public class ComicController : MonoBehaviour
     public float delayBetweenPanels = 1.0f;
 
     [Header("Popup")]
-    [Tooltip("Pop Time")]
     public float popupDuration = 0.5f;
     public AnimationCurve popupCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
     [Header("Prefab Setting")]
-    [Tooltip("Out Time")]
     public float delayBeforeEnd = 2.0f;
-
-    [Tooltip(" Prefab ∂—¥‰ª®“°ÀπÈ“µË“ß Project ¡“„ Ëµ√ßπ’È‰¥È‡≈¬!")]
     public GameObject nextPrefab;
-
-    [Tooltip("µÈÕß°“√„ÀÈª‘¥ÀπÈ“§Õ¡¡‘§π’È∑‘Èß‰ª‡≈¬‰À¡‡¡◊ËÕ‚™«Ï®∫?")]
     public bool hideComicWhenFinished = true;
+
+    [Header("Transition")]
+    public GameObject transitionPanel;
+    public float transitionDelay = 2f;
 
     private Vector3[] _originalScales;
 
@@ -57,21 +56,32 @@ public class ComicController : MonoBehaviour
             }
         }
 
-        Debug.Log("‚™«Ï§√∫·≈È« °”≈—ß√Õ‡æ◊ËÕ· ¥ß Prefab ∂—¥‰ª...");
+        Debug.Log("‡πÇ‡∏ä‡∏ß‡πå‡∏Ñ‡∏£‡∏ö‡πÅ‡∏•‡πâ‡∏ß ‡∏Å‡∏≥‡∏•‡∏±‡∏á‡∏£‡∏≠...");
         yield return new WaitForSeconds(delayBeforeEnd);
 
-        
+        // ‡πÅ‡∏™‡∏î‡∏á prefab ‡∏ñ‡∏±‡∏î‡πÑ‡∏õ
         if (nextPrefab != null)
         {
-            
             Instantiate(nextPrefab);
         }
 
-       
+        // ‡∏ã‡πà‡∏≠‡∏ô comic
         if (hideComicWhenFinished)
         {
             gameObject.SetActive(false);
         }
+
+        // üî• ‡πÄ‡∏õ‡∏¥‡∏î transition
+        if (transitionPanel != null)
+        {
+            transitionPanel.SetActive(true);
+        }
+
+        // üî• ‡∏£‡∏≠ 2 ‡∏ß‡∏¥
+        yield return new WaitForSeconds(transitionDelay);
+
+        // üî• ‡πÇ‡∏´‡∏•‡∏î‡∏â‡∏≤‡∏Å‡πÅ‡∏ö‡∏ö‡∏ó‡∏µ‡πà‡∏Ñ‡∏∏‡∏ì‡∏ï‡πâ‡∏≠‡∏á‡∏Å‡∏≤‡∏£
+        SceneManager.LoadScene("MapLv2");
     }
 
     IEnumerator AnimatePopup(int panelIndex)
@@ -83,8 +93,8 @@ public class ComicController : MonoBehaviour
         while (timer < popupDuration)
         {
             timer += Time.deltaTime;
-            float normalizedTime = timer / popupDuration;
-            float curveValue = popupCurve.Evaluate(normalizedTime);
+            float t = timer / popupDuration;
+            float curveValue = popupCurve.Evaluate(t);
             panel.transform.localScale = originalScale * curveValue;
             yield return null;
         }
