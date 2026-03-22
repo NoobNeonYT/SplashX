@@ -190,7 +190,7 @@ MonoBehaviour:
   damage: 15
   lifeTime: 5
   explosionVFX: {fileID: 0}
-  explosionSound: {fileID: 0}
+  explosionSound: {fileID: 8300000, guid: 04b5b5715fcbd2a4ead49032c3cf5ac9, type: 3}
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
