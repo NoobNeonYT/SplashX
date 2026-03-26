@@ -635,6 +635,7 @@ MonoBehaviour:
   maxHealth: 10000
   currentHealth: 0
   isBoss: 1
+  isBossDontDestroy: 0
   hitSparkPrefab: {fileID: 0}
   stunDuration: 0.2
   isStunned: 0
@@ -2151,6 +2152,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SplashX_PlayerMovement
   moveSpeed: 8
+  Walk: {fileID: 0}
   airHangTimeOnHit: 0.4
   jumpForce: 16
   upwardGravityMult: 4
@@ -2244,6 +2246,7 @@ MonoBehaviour:
   boneAnim: {fileID: 1590010473}
   fbfAttackModel: {fileID: 38846445}
   fbfAnim: {fileID: 38846446}
+  stepInterval: 0.4
 --- !u!50 &1172384916
 Rigidbody2D:
   serializedVersion: 5
@@ -3787,12 +3790,14 @@ MonoBehaviour:
   bossSize: 12
   megaBossSize: 16
   zoomSpeed: 5
+  mapBottomY: -5
   scoutRadius: 15
   combatRadius: 6
   bossDetectRadius: 20
   enemyLayer:
     serializedVersion: 2
     m_Bits: 256
+  isLockedZ: 0
 --- !u!114 &1668799704
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1045,7 +1045,11 @@ public class SplashX_PlayerMovement : MonoBehaviour
 
             if (stepTimer <= 0f)
             {
-                SFXManager.Instance.PlaySoundFXClip(Walk, transform, 10f);
+                if (SFXManager.Instance != null)
+                {
+                    SFXManager.Instance.PlaySoundFXClip(Walk, transform, 1f);
+                }
+
                 stepTimer = stepInterval;
             }
         }

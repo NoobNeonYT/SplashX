@@ -12,7 +12,7 @@ EditorBuildSettings:
     path: Assets/001_TheGame/Scenes/MapLv2.unity
     guid: beea9fac929050a4ab171e3a7e431a7f
   - enabled: 1
-    path: Assets/001_TheGame/Scenes/Background2_Boss.unity
+    path: Assets/001_TheGame/Scenes/BigNull_Boss.unity
     guid: 63d2ec64ddc2d7346bf68dce1ac667f5
   - enabled: 1
     path: Assets/001_TheGame/Scenes/MapLv3.unity
