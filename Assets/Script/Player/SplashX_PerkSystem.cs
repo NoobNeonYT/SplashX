@@ -236,4 +236,11 @@ public class SplashX_PerkSystem : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, stealRadius);
     }
+
+    // 🔥 ฟังก์ชันนี้เปิดไว้รับสายไฟจาก UI ที่เพิ่งเกิดใหม่ในฉาก
+    public void ForceUpdateUI()
+    {
+        UpdatePerkUI();
+        UpdateSkillSelectionUI(selectedSkill);
+    }
 }

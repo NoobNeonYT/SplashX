@@ -317,6 +317,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1371795650773712927, guid: 72350464de032934b84fbb2f962ec016, type: 3}
+      propertyPath: playerStats
+      value: 
+      objectReference: {fileID: 878358863}
     - target: {fileID: 2428491872618397743, guid: 72350464de032934b84fbb2f962ec016, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -397,6 +401,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3031080992761836783, guid: 72350464de032934b84fbb2f962ec016, type: 3}
+      propertyPath: redFillImage
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 7096991961832171458, guid: 72350464de032934b84fbb2f962ec016, type: 3}
       propertyPath: m_Name
       value: HPandStaminaUI 2
@@ -410,7 +418,9 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 7233858270022562883, guid: 72350464de032934b84fbb2f962ec016, type: 3}
+    - {fileID: 9028047610088401791, guid: 72350464de032934b84fbb2f962ec016, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 72350464de032934b84fbb2f962ec016, type: 3}
@@ -431,7 +441,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &543608352 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 621202572489265317, guid: 72350464de032934b84fbb2f962ec016, type: 3}
+  m_CorrespondingSourceObject: {fileID: 6465111073362833214, guid: 72350464de032934b84fbb2f962ec016, type: 3}
   m_PrefabInstance: {fileID: 543608348}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
@@ -610,6 +620,17 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
   CustomBlends: {fileID: 0}
+--- !u!114 &878358863 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7484056791007689370, guid: 5c2ec9a1963c01142ba852f6e22e0235, type: 3}
+  m_PrefabInstance: {fileID: 1890057194}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63e8ebe50ba362c4098fc51002f6a108, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SplashX_PlayerStats
 --- !u!1 &930284500
 GameObject:
   m_ObjectHideFlags: 0

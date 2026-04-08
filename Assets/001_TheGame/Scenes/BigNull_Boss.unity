@@ -569,6 +569,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ebefd0bdcbb63e49adcd234d37de8bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SplashX_Enemy
+--- !u!114 &572287721 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6465111073362833214, guid: 72350464de032934b84fbb2f962ec016, type: 3}
+  m_PrefabInstance: {fileID: 1525766380}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!1 &812664317
 GameObject:
   m_ObjectHideFlags: 0
@@ -962,7 +973,7 @@ PrefabInstance:
     - target: {fileID: 5205338532569166476, guid: 5c2ec9a1963c01142ba852f6e22e0235, type: 3}
       propertyPath: perkBarFill
       value: 
-      objectReference: {fileID: 1525766384}
+      objectReference: {fileID: 572287721}
     - target: {fileID: 5583382936920455857, guid: 5c2ec9a1963c01142ba852f6e22e0235, type: 3}
       propertyPath: m_LocalRotation.w
       value: 0.6450003
@@ -1060,6 +1071,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5c2ec9a1963c01142ba852f6e22e0235, type: 3}
+--- !u!114 &1001487751 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7484056791007689370, guid: 5c2ec9a1963c01142ba852f6e22e0235, type: 3}
+  m_PrefabInstance: {fileID: 1001487750}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63e8ebe50ba362c4098fc51002f6a108, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SplashX_PlayerStats
 --- !u!1 &1048648617
 GameObject:
   m_ObjectHideFlags: 0
@@ -1855,6 +1877,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1371795650773712927, guid: 72350464de032934b84fbb2f962ec016, type: 3}
+      propertyPath: playerStats
+      value: 
+      objectReference: {fileID: 1001487751}
     - target: {fileID: 2428491872618397743, guid: 72350464de032934b84fbb2f962ec016, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -1959,17 +1985,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 3536860624493725311, guid: 72350464de032934b84fbb2f962ec016, type: 3}
   m_PrefabInstance: {fileID: 1525766380}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1525766384 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 621202572489265317, guid: 72350464de032934b84fbb2f962ec016, type: 3}
-  m_PrefabInstance: {fileID: 1525766380}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!114 &1741273240 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7230993657730459429, guid: 8947c258a745e8b4789e172649eed1da, type: 3}

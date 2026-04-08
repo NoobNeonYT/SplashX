@@ -285,6 +285,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 72350464de032934b84fbb2f962ec016, type: 3}
+--- !u!114 &568644149 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6465111073362833214, guid: 72350464de032934b84fbb2f962ec016, type: 3}
+  m_PrefabInstance: {fileID: 568644148}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!224 &701440830 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8706687248617104366, guid: 72350464de032934b84fbb2f962ec016, type: 3}
@@ -385,7 +396,7 @@ PrefabInstance:
     - target: {fileID: 5205338532569166476, guid: 5c2ec9a1963c01142ba852f6e22e0235, type: 3}
       propertyPath: perkBarFill
       value: 
-      objectReference: {fileID: 1312496676}
+      objectReference: {fileID: 568644149}
     - target: {fileID: 5583382936920455857, guid: 5c2ec9a1963c01142ba852f6e22e0235, type: 3}
       propertyPath: m_LocalRotation.w
       value: 0.64500415
@@ -746,17 +757,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8ceee8bd419e7b747998fe69fa0b16c2, type: 3}
---- !u!114 &1312496676 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 621202572489265317, guid: 72350464de032934b84fbb2f962ec016, type: 3}
-  m_PrefabInstance: {fileID: 568644148}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!1001 &1934206736
 PrefabInstance:
   m_ObjectHideFlags: 0

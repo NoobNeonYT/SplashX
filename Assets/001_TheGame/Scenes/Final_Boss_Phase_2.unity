@@ -1647,6 +1647,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5c2ec9a1963c01142ba852f6e22e0235, type: 3}
+--- !u!114 &427579272 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7484056791007689370, guid: 5c2ec9a1963c01142ba852f6e22e0235, type: 3}
+  m_PrefabInstance: {fileID: 427579271}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63e8ebe50ba362c4098fc51002f6a108, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SplashX_PlayerStats
 --- !u!1 &444336558
 GameObject:
   m_ObjectHideFlags: 0
@@ -2628,6 +2639,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1371795650773712927, guid: 72350464de032934b84fbb2f962ec016, type: 3}
+      propertyPath: playerStats
+      value: 
+      objectReference: {fileID: 427579272}
     - target: {fileID: 2428491872618397743, guid: 72350464de032934b84fbb2f962ec016, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -2738,7 +2753,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &745617498 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 621202572489265317, guid: 72350464de032934b84fbb2f962ec016, type: 3}
+  m_CorrespondingSourceObject: {fileID: 6465111073362833214, guid: 72350464de032934b84fbb2f962ec016, type: 3}
   m_PrefabInstance: {fileID: 745617494}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
