@@ -1483,7 +1483,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 018ded6cca28c3a4eabdafc77bcf5987, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LoadSceneOnTrigger
-  sceneName: Background2_Boss
+  sceneName: BigNull_Boss
   transitionPanel: {fileID: 259374509379176937}
   delay: 2
 --- !u!1 &4122026729287681456

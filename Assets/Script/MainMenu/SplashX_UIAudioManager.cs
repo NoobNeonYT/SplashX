@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class UIAudioManager : MonoBehaviour
 {
@@ -16,11 +16,27 @@ public class UIAudioManager : MonoBehaviour
 
     public void PlayHover()
     {
-        audioSource.PlayOneShot(hoverSound);
+        // 🔥 แก้ชื่อให้ตรงกับด้านบนแล้ว (ใช้คำว่า hoverSound)
+        if (hoverSound != null)
+        {
+            audioSource.PlayOneShot(hoverSound);
+        }
+        else
+        {
+            Debug.LogWarning("⚠️ [UIManager] ลืมใส่ไฟล์เสียง Hover นะ!");
+        }
     }
 
     public void PlayClick()
     {
-        audioSource.PlayOneShot(clickSound);
+        // 🔥 แถมเกราะกันพังให้ปุ่ม Click ด้วยครับ!
+        if (clickSound != null)
+        {
+            audioSource.PlayOneShot(clickSound);
+        }
+        else
+        {
+            Debug.LogWarning("⚠️ [UIManager] ลืมใส่ไฟล์เสียง Click นะ!");
+        }
     }
 }

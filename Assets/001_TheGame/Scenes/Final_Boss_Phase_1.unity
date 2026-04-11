@@ -1014,6 +1014,8 @@ MonoBehaviour:
   isBossDontDestroy: 1
   hitSparkPrefab: {fileID: 0}
   stunDuration: 0.2
+  flashColor: {r: 1, g: 0, b: 0, a: 1}
+  flashDuration: 0.1
   isStunned: 0
 --- !u!1 &323063075
 GameObject:
@@ -1395,6 +1397,8 @@ MonoBehaviour:
   isBossDontDestroy: 1
   hitSparkPrefab: {fileID: 0}
   stunDuration: 0.2
+  flashColor: {r: 1, g: 0, b: 0, a: 1}
+  flashDuration: 0.1
   isStunned: 0
 --- !u!114 &411718821
 MonoBehaviour:
@@ -1466,6 +1470,10 @@ PrefabInstance:
     - target: {fileID: 3752363450822711382, guid: 5c2ec9a1963c01142ba852f6e22e0235, type: 3}
       propertyPath: m_Name
       value: Kyo
+      objectReference: {fileID: 0}
+    - target: {fileID: 3752363450822711382, guid: 5c2ec9a1963c01142ba852f6e22e0235, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4239233870237407524, guid: 5c2ec9a1963c01142ba852f6e22e0235, type: 3}
       propertyPath: m_LocalRotation.w
@@ -2075,6 +2083,8 @@ MonoBehaviour:
   isBossDontDestroy: 1
   hitSparkPrefab: {fileID: 0}
   stunDuration: 0.2
+  flashColor: {r: 1, g: 0, b: 0, a: 1}
+  flashDuration: 0.1
   isStunned: 0
 --- !u!114 &511548802
 MonoBehaviour:
@@ -2620,6 +2630,8 @@ MonoBehaviour:
   isBossDontDestroy: 1
   hitSparkPrefab: {fileID: 0}
   stunDuration: 0.2
+  flashColor: {r: 1, g: 0, b: 0, a: 1}
+  flashDuration: 0.1
   isStunned: 0
 --- !u!1 &839327120
 GameObject:
@@ -4436,11 +4448,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 663388557435619515, guid: c27dfddf763ca694dbcacbe1b589e6ed, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -105.66908
+      value: -90.5
       objectReference: {fileID: 0}
     - target: {fileID: 663388557435619515, guid: c27dfddf763ca694dbcacbe1b589e6ed, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -46.37805
+      value: -71.6
       objectReference: {fileID: 0}
     - target: {fileID: 663388557435619515, guid: c27dfddf763ca694dbcacbe1b589e6ed, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4942,6 +4954,8 @@ MonoBehaviour:
   isBossDontDestroy: 1
   hitSparkPrefab: {fileID: 0}
   stunDuration: 0.2
+  flashColor: {r: 1, g: 0, b: 0, a: 1}
+  flashDuration: 0.1
   isStunned: 0
 --- !u!114 &1889071916
 MonoBehaviour:
@@ -5136,6 +5150,8 @@ MonoBehaviour:
   isBossDontDestroy: 1
   hitSparkPrefab: {fileID: 0}
   stunDuration: 0.2
+  flashColor: {r: 1, g: 0, b: 0, a: 1}
+  flashDuration: 0.1
   isStunned: 0
 --- !u!114 &1921846926
 MonoBehaviour:

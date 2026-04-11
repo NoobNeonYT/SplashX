@@ -1,23 +1,32 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class SplashX_SceneSpawnPoint : MonoBehaviour
 {
-    void Start()
+    // 🔥 เปลี่ยนมาใช้ IEnumerator เพื่อให้มัน "รอ" ได้
+    IEnumerator Start()
     {
-        // 1. ตามหาตัวผู้เล่นในฉาก (ต้องแน่ใจว่าตัวผู้เล่นเซ็ต Tag เป็น "Player" ไว้แล้ว)
+        // 1. รอให้ Unity โหลดทุกอย่างในฉาก และดึงตัวผู้เล่นข้ามมาให้เสร็จสมบูรณ์ก่อน (รอจบเฟรม)
+        yield return new WaitForEndOfFrame();
+
         GameObject player = GameObject.FindGameObjectWithTag("Player");
 
         if (player != null)
         {
-            // 2. จับผู้เล่นวาร์ปมาที่ตำแหน่งของจุดเกิดนี้ทันที
-            player.transform.position = transform.position;
-            Debug.Log("📍 โหลดฉากใหม่! ย้ายผู้เล่นมาที่จุด Spawn เรียบร้อย");
+            // 2. เบรกฟิสิกส์! ล้างค่าความเร็วที่ค้างมาจากฉากที่แล้วให้หมด จะได้ไม่สไลด์เด้งกลับ
+            Rigidbody2D rb = player.GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector2.zero;
+            }
 
-            // (ถ้ามีระบบล็อกกล้อง ก็สามารถสั่งกล้องให้รีเซ็ตมาที่ผู้เล่นตรงนี้ได้ด้วย)
+            // 3. บังคับจับวางตำแหน่ง
+            player.transform.position = transform.position;
+            Debug.Log("📍 [SpawnPoint] โหลดฉากเสร็จ! ล้างฟิสิกส์และบังคับวาร์ปสำเร็จ");
         }
         else
         {
-            Debug.LogWarning("⚠️ หาตัวผู้เล่นไม่เจอ! เช็คว่าผู้เล่นติด Tag 'Player' หรือยัง?");
+            Debug.LogWarning("⚠️ [SpawnPoint] หาตัวผู้เล่นไม่เจอ!");
         }
     }
 }

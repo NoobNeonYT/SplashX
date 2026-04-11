@@ -18,6 +18,14 @@ public class SplashX_Enemy : MonoBehaviour
     public GameObject hitSparkPrefab;
     public float stunDuration = 0.2f;
 
+    // 🔥 โซนตัวแปรระบบกระพริบ
+    [Header("Flash Effect (ตัวกระพริบ)")]
+    public Color flashColor = Color.red;   // สีที่จะให้กระพริบ (ปรับใน Inspector ได้)
+    public float flashDuration = 0.1f;     // กระพริบนานกี่วินาที
+    private SpriteRenderer sr;             // ตัวเก็บภาพ Sprite
+    private Color originalColor;           // ตัวจำสีดั้งเดิมของศัตรู
+    private Coroutine flashCoroutine;      // ตัวคุมจังหวะกระพริบไม่ให้ซ้อนกัน
+
     public bool isStunned = false;
     private Rigidbody2D rb;
 
@@ -25,6 +33,13 @@ public class SplashX_Enemy : MonoBehaviour
     {
         currentHealth = maxHealth;
         rb = GetComponent<Rigidbody2D>();
+
+        // หา SpriteRenderer ในตัวมันเอง (หรือลูกของมัน) เพื่อเอามาทำสีกระพริบ
+        sr = GetComponentInChildren<SpriteRenderer>();
+        if (sr != null)
+        {
+            originalColor = sr.color; // จำสีเดิมไว้
+        }
     }
 
     void Update()
@@ -38,6 +53,14 @@ public class SplashX_Enemy : MonoBehaviour
     {
         currentHealth -= damage;
         Debug.Log("Enemy took damage! Remaining HP: " + currentHealth);
+
+        // 🌟 เรียกใช้ระบบกระพริบตรงนี้!
+        if (sr != null)
+        {
+            // ถ้ากำลังกระพริบอยู่ ให้หยุดอันเก่าก่อน แล้วเริ่มกระพริบใหม่ (กันบัคสีกระพริบค้างตอนโดนตีรัวๆ)
+            if (flashCoroutine != null) StopCoroutine(flashCoroutine);
+            flashCoroutine = StartCoroutine(FlashRoutine());
+        }
 
         if (hitSparkPrefab != null)
         {
@@ -56,6 +79,14 @@ public class SplashX_Enemy : MonoBehaviour
                 StartCoroutine(HitStunRoutine());
             }
         }
+    }
+
+    // 🌟 Coroutine สำหรับสลับสีไปมา
+    private IEnumerator FlashRoutine()
+    {
+        sr.color = flashColor;                     // เปลี่ยนเป็นสีกระพริบ (เช่น แดง)
+        yield return new WaitForSeconds(flashDuration); // รอแป๊บเดียว (0.1 วิ)
+        sr.color = originalColor;                  // คืนค่ากลับเป็นสีปกติ
     }
 
     private IEnumerator HitStunRoutine()

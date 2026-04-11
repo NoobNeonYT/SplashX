@@ -379,7 +379,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5205338532569166476, guid: 5c2ec9a1963c01142ba852f6e22e0235, type: 3}
       propertyPath: maxPerk
-      value: 0
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 5205338532569166476, guid: 5c2ec9a1963c01142ba852f6e22e0235, type: 3}
       propertyPath: skill1UI
@@ -488,6 +488,10 @@ PrefabInstance:
     - target: {fileID: 7394312403633826967, guid: 5c2ec9a1963c01142ba852f6e22e0235, type: 3}
       propertyPath: m_LocalRotation.z
       value: -0.725653
+      objectReference: {fileID: 0}
+    - target: {fileID: 7484056791007689370, guid: 5c2ec9a1963c01142ba852f6e22e0235, type: 3}
+      propertyPath: maxHp
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 8605636227931784168, guid: 5c2ec9a1963c01142ba852f6e22e0235, type: 3}
       propertyPath: m_LocalRotation.w
